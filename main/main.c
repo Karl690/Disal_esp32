@@ -1,7 +1,13 @@
 #include "main.h"
 #include "devices/display.h"
 #include "ui/ui.h"
+#include "ledc/ledc.h"
+#include "gpio/gpio.h"
+#include "tone/tone.h"
+#include "button/button.h"
 #include "wifi/wifi.h"
+#include "encoder/encoder.h"
+#include "task_manager/task_manager.h"
 const char *TAG = "HYREL";
 bool IsInitialized = false;
 
@@ -18,9 +24,49 @@ extern "C" void app_main(void)
 	ESP_ERROR_CHECK(ret);
 	
 	IsInitialized = false;
+	powerOn();
 	wifi_init();
 	
 	InitLCDAndLVGL();
 	InitUI();
+
+	ledc_init();
+	tone_init();
+	encoder_init();
+	// button_init();
 	IsInitialized = true;
+
+	tone_play(4000, 30);
+
+	task_manager_init();
+	while (1) {
+		if (gpio_get_level(PIN_ENCODER_BUTTON) == 0) {
+			ESP_LOGI(TAG, "Button pressed");
+			tone_play(7000, 1000);
+		} 
+		vTaskDelay(100 / portTICK_PERIOD_MS);
+	}
+}
+
+
+void powerOn() {
+	gpio_num_t pin_pwr_holding = (gpio_num_t)PIN_PWR_HOLDING;
+
+	gpio_reset_pin(pin_pwr_holding);
+	gpio_set_direction(pin_pwr_holding, GPIO_MODE_OUTPUT);
+	gpio_set_pull_mode(pin_pwr_holding, GPIO_PULLUP_PULLDOWN);
+
+	/* Keep power on */
+	gpio_set_level(pin_pwr_holding, 1);
+}
+
+void powerOff() {
+	gpio_num_t pin_pwr_holding = (gpio_num_t)PIN_PWR_HOLDING;
+
+	gpio_reset_pin(pin_pwr_holding);
+	gpio_set_direction(pin_pwr_holding, GPIO_MODE_OUTPUT);
+	gpio_set_pull_mode(pin_pwr_holding, GPIO_PULLUP_PULLDOWN);
+
+	/* Keep power on */
+	gpio_set_level(pin_pwr_holding, 0);
 }

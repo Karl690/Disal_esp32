@@ -21,7 +21,7 @@ void ui_splash_screen_init(void)
 	
 	label = ui_create_label(ui_splash_screen, "NO TOUCH", &mono_regualr_20);
 	lv_obj_align(label, LV_ALIGN_TOP_MID, 0, 20);
-	lv_obj_t *btn = ui_create_button(ui_splash_screen, "TEST", 80, 40, 3, &mono_regualr_20, ui_splash_button_cb, NULL);
+	lv_obj_t *btn = ui_create_button(ui_splash_screen, "TEST1", 80, 40, 3, &mono_regualr_20, ui_splash_button_cb, NULL);
 	lv_obj_align(btn, LV_ALIGN_CENTER, 0, 0);
 
 	lv_obj_t* banner = ui_create_label(ui_splash_screen, "HYREL 2025", &mono_regualr_20);

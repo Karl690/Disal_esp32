@@ -1,5 +1,4 @@
 #include "devices/LCD_GC9A01.h"
-#include "devices/TOUCH_FT3267.h"
 #include "ui/ui.h"
 /*
 MIT License
@@ -27,7 +26,6 @@ SOFTWARE.
 */
 
 
-#include "lv_conf.h"
 #include <lvgl.h>
 #include <freertos/FreeRTOS.h>
 

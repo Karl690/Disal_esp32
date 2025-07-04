@@ -3,6 +3,12 @@ idf_component_register(
                 	main.c
                 	devices/display.c
 					wifi/wifi.c
+					gpio/gpio.c
+					button/button.c
+					encoder/encoder.c
+					ledc/ledc.c
+					tone/tone.c
+					task_manager/task_manager.c
                 	ui/ui.c
                     ui/ui-splash.c
                 	ui/images/btn_about.c

@@ -641,7 +641,7 @@ namespace lgfx
                             | op_code << 11 ;
 #if defined (CONFIG_IDF_TARGET_ESP32S3)
     (dev->comd)[index].val = cmd_val; //VSCODE
-    //  (&dev->comd0)[index].val = cmd_val;
+    // (&dev->comd0)[index].val = cmd_val;
 #else
       dev->command[index].val = cmd_val;
 #endif
