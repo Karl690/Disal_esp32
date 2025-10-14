@@ -25,11 +25,11 @@ extern "C" void app_main(void)
 	
 	IsInitialized = false;
 	powerOn();
-	wifi_init();
 	
 	InitLCDAndLVGL();
-	InitUI();
+	ui_init();
 
+	// wifi_init();
 	ledc_init();
 	tone_init();
 	encoder_init();

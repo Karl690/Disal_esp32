@@ -55,7 +55,7 @@ SOFTWARE.
 #define PAD_SMALL   (disp_size == DISP_LARGE ? lv_disp_dpx(theme.disp, 14) : disp_size == DISP_MEDIUM ? lv_disp_dpx(theme.disp, 12) : lv_disp_dpx(theme.disp, 10))
 #define PAD_TINY   (disp_size == DISP_LARGE ? lv_disp_dpx(theme.disp, 8) : disp_size == DISP_MEDIUM ? lv_disp_dpx(theme.disp, 6) : lv_disp_dpx(theme.disp, 2))
 
-#define BUFF_SIZE 20
+#define BUFF_SIZE 40
 // #define LVGL_DOUBLE_BUFFER
 
 
@@ -73,7 +73,7 @@ extern size_t		display_compress_buffer_size;
 esp_err_t InitLCDAndLVGL();
 
 // Display callback to flush the buffer to screen
-void display_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p);
+void display_flush(lv_display_t *disp, const lv_area_t *area, uint8_t *px_map);
 
 /* Setting up tick task for lvgl */
 void lv_tick_task(void *arg);
@@ -81,7 +81,7 @@ void lv_tick_task(void *arg);
 void gui_task(void *args);
 
 // Touchpad callback to read the touchpad
-void touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data);
+void touchpad_read(lv_indev_t * indev, lv_indev_data_t * data);
 
 bool display_dump_buffer();
 void display_reset_capture_buffer();

@@ -1,127 +1,159 @@
-// SquareLine LVGL GENERATED FILE
-// EDITOR VERSION: SquareLine Studio 1.1.1
-// LVGL VERSION: 8.2.0
-// PROJECT: SquareLine_Project
-
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-
 #include "ui.h"
-#include "ui_helpers.h"
-//#include "images/resource_img.h"
-
+#include "ui-helpers.h"
 #include "ui-splash.h"
 
-lv_obj_t* ui_create_screen()
-{
-	lv_obj_t* screen = lv_obj_create(NULL);
-	lv_obj_clear_flag(screen, LV_OBJ_FLAG_SCROLLABLE); /// Flags
-	lv_obj_set_style_bg_color(screen, lv_color_hex(UI_BACKGROUND_COLOR), LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_opa(screen, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-	return screen;
-}
 
+ui_msg_t ui_msgbox;
+ui_top_bar_t ui_top_bar;
+lv_obj_t* ui_active_screen;
+SCREEN_TYPE ui_current_screen;
+char ui_temp_buffer[256];
 
-lv_obj_t* ui_create_label(lv_obj_t* parent, const char* text, const lv_font_t* font)
+void ui_transform_screen(SCREEN_TYPE screen, lv_scr_load_anim_t anim, uint16_t time)
 {
-	lv_obj_t* obj = lv_label_create(parent);	
-	lv_obj_set_width(obj, LV_SIZE_CONTENT); /// 1
-	lv_obj_set_height(obj, LV_SIZE_CONTENT); /// 1
-	lv_label_set_recolor(obj, true);	
-	lv_label_set_text_fmt(obj, "%s", text);	
-	lv_obj_set_style_text_font(obj, font, LV_PART_MAIN);
-	return obj;
-}
-
-lv_obj_t* ui_create_panel(lv_obj_t* parent, uint32_t color, bool scrollable)
-{
-	lv_obj_t* panel = lv_obj_create(parent);
-	lv_obj_set_style_pad_all(panel, 0, LV_PART_MAIN);
-	lv_obj_set_style_border_width(panel, 0, LV_PART_MAIN);
-	if (!scrollable)
+	ESP_LOGI("UI", "Transform screen %d -> %d", ui_current_screen, screen);
+	if (lv_obj_is_visible(ui_msgbox.window)) lv_obj_add_flag(ui_msgbox.window, LV_OBJ_FLAG_HIDDEN);
+	switch ((uint8_t)screen)
 	{
-		lv_obj_clear_flag(panel, LV_OBJ_FLAG_SCROLLABLE);
+	default:
+		return;
 	}
-	lv_obj_set_style_bg_color(panel, lv_color_hex(color), LV_PART_MAIN);
-	return panel;
+	lv_obj_clear_flag(ui_top_bar.panel, LV_OBJ_FLAG_HIDDEN);
+	ui_current_screen = screen;
+	lv_obj_set_parent(ui_msgbox.window, ui_active_screen);
+	lv_obj_set_parent(ui_top_bar.panel, ui_active_screen);
+	lv_obj_move_foreground(ui_top_bar.panel);
+	lv_scr_load_anim(ui_active_screen, anim, time, 0, false);
 }
-
-void ui_textarea_set_readonly(lv_obj_t* obj, bool b)
+void ui_messagebox_delay_timer(lv_timer_t * timer)
 {
-	lv_textarea_set_cursor_click_pos(obj, !b); // Disable cursor positioning by click
-	if (b)
-	{
-		lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE); // D	
+	lv_obj_add_flag(ui_msgbox.window, LV_OBJ_FLAG_HIDDEN);
+}
+void ui_show_messagebox(MESSAGEBOX_TYPE type, const char* msg, uint16_t delay)
+{
+	lv_color_t color = lv_color_hex(UI_MSG_INFO_COLOR);
+	if (type == MESSAGEBOX_WARNING) {
+		color = lv_color_hex(UI_MSG_WARNING_COLOR);
 	}
-	else
-	{
-		lv_obj_add_flag(obj, LV_OBJ_FLAG_CLICKABLE); // D	
+	else if (type == MESSAGEBOX_ERROR) {
+		color = lv_color_hex(UI_MSG_ERROR_COLOR);
 	}
+	else {
+		
+	}
+	lv_obj_set_style_bg_color(ui_msgbox.window, color, LV_PART_MAIN);
+	lv_label_set_text(ui_msgbox.label, msg);
 	
-	
+	if (delay > 0)
+	{	
+		lv_timer_t * timer = lv_timer_create(ui_messagebox_delay_timer, delay, ui_msgbox.window);
+		lv_timer_set_repeat_count(timer, 1);		
+	}
+	lv_obj_set_width(ui_msgbox.window, LV_SIZE_CONTENT);
+	lv_obj_clear_flag(ui_msgbox.window, LV_OBJ_FLAG_HIDDEN);
 }
-
-void ui_change_button_color(lv_obj_t* button, uint32_t bg, uint32_t fg)
+void ui_create_messagebox()
 {
-	lv_obj_t* label = lv_obj_get_child(button, 0);
-	if (label)	lv_obj_set_style_text_color(label, lv_color_hex(fg), LV_PART_MAIN);
-	lv_obj_set_style_bg_color(button, lv_color_hex(bg), LV_PART_MAIN);
+	ui_msgbox.window = lv_obj_create(lv_scr_act());
+	lv_obj_clear_flag(ui_msgbox.window, LV_OBJ_FLAG_SCROLLABLE); /// Flags
+	lv_obj_set_style_border_width(ui_msgbox.window, 0, LV_PART_MAIN);
+	lv_obj_set_style_bg_opa(ui_msgbox.window, 240, LV_PART_MAIN);
+	lv_obj_set_size(ui_msgbox.window, LV_PCT(80), 40);
+	ui_msgbox.label = ui_helpers_create_label(ui_msgbox.window, (char*)"", &lv_font_montserrat_14);
+	lv_obj_set_style_text_color(ui_msgbox.label, lv_color_hex(UI_MSG_FORECOLOR), LV_PART_MAIN);
+	lv_obj_center(ui_msgbox.window);	
+	lv_obj_add_flag(ui_msgbox.window, LV_OBJ_FLAG_HIDDEN);
 }
-
-void ui_change_button_text(lv_obj_t* button, const char* text)
+void ui_create_top_bar()
 {
-	lv_obj_t* label = lv_obj_get_child(button, 0);
-	if (label)	lv_label_set_text(label, text);
+	lv_obj_t* obj = lv_obj_create(lv_scr_act());
+	lv_obj_set_size(obj, SCREEN_WIDTH, 30);
+	lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
+	lv_obj_set_style_bg_opa(obj, 150, LV_PART_MAIN);
+	lv_obj_set_style_pad_all(obj, 0, LV_PART_MAIN);
+	lv_obj_set_style_border_width(obj, 0, LV_PART_MAIN);
+	ui_top_bar.panel = obj;
+    uint16_t x = 70, y = 2;
+	obj = ui_helpers_create_label(ui_top_bar.panel, "", &lv_font_montserrat_24);
+	lv_obj_set_pos(obj, x, y);
+	lv_obj_set_size(obj, 70, 20);
+	ui_top_bar.notification = obj;
+	
+    x += 30;
+	obj = ui_helpers_create_label(ui_top_bar.panel, LV_SYMBOL_WIFI, &lv_font_montserrat_24);
+	lv_obj_set_pos(obj, x, y);
+	ui_top_bar.wifi = obj;
+	
+    x += 30;
+	obj = ui_helpers_create_label(ui_top_bar.panel, LV_SYMBOL_BLUETOOTH, &lv_font_montserrat_24);
+	lv_obj_set_pos(obj, x, y);
+	ui_top_bar.bluetooth = obj;
+	
+    x = SCREEN_WIDTH - 200;
+	obj = ui_helpers_create_label(ui_top_bar.panel, LV_SYMBOL_CHARGE, &lv_font_montserrat_24);
+	lv_obj_set_pos(obj, x, y);
+	ui_top_bar.charge = obj;
+	
+    x += 30;
+	obj = ui_helpers_create_label(ui_top_bar.panel, "100%% " LV_SYMBOL_BATTERY_FULL, &lv_font_montserrat_24);
+	lv_obj_set_pos(obj, x, y);
+	//lv_obj_set_width(obj, 70);
+	lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_RIGHT, 0);
+	ui_top_bar.battery = obj;
+	lv_obj_add_flag(ui_top_bar.panel, LV_OBJ_FLAG_HIDDEN);
+	
 }
-lv_obj_t* ui_create_button(lv_obj_t* parent,
-	const char* text,
-	uint16_t w,
-	uint16_t h, 
-	uint16_t radius,
-	const lv_font_t* font,
-	lv_event_cb_t event_button_handler, 
-	void* event_data)
+
+void ui_gesture_event_handler(lv_event_t * e)
 {
-	lv_obj_t* button = lv_btn_create(parent);
-	
-	lv_obj_set_width(button, w); /// 1
-	lv_obj_set_height(button, h); /// 1
-	
-	//lv_obj_add_flag(button, LV_OBJ_FLAG_SCROLL_ON_FOCUS); /// Flags
-	lv_obj_add_flag(button, LV_OBJ_FLAG_EVENT_BUBBLE);
-	// lv_obj_clear_flag(button, LV_OBJ_FLAG_SCROLLABLE); /// Flags
-	lv_obj_set_style_radius(button, radius, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_color(button, lv_color_hex(UI_BUTTON_NORMAL_BG_COLOR), LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_opa(button, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_all(button, 1, LV_PART_MAIN);
-	
-	lv_obj_t* label = lv_label_create(button);	
-	//lv_obj_set_width(label, w-4); /// 1
-	//lv_obj_set_pos(label, 0, 0);
-	//lv_obj_set_height(label, h); /// 1
-	lv_obj_center(label);
-	//lv_obj_set_align(label, LV_ALIGN_CENTER);
-	
-	lv_obj_set_style_text_color(label, lv_color_hex(UI_BUTTON_NORMAL_FG_COLOR), LV_PART_MAIN);
-	lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, 0);
-	
-	//lv_label_set_recolor(label, true);
-	lv_label_set_text_fmt(label, text);
-	lv_obj_set_style_text_font(label, font, LV_PART_MAIN | LV_STATE_DEFAULT);
-	if (event_button_handler)	lv_obj_add_event_cb(button, event_button_handler, LV_EVENT_CLICKED, event_data);	
-	lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
-	
-	return button;
+	lv_dir_t gesture_dir = lv_indev_get_gesture_dir(lv_indev_get_act());
+
+	switch (gesture_dir) {
+	case LV_DIR_LEFT:
+		// if (ui_current_screen != SCREEN_WATCH)
+		//  	ui_transform_screen(SCREEN_HOME, LV_SCR_LOAD_ANIM_OVER_LEFT, 100);
+		break;
+
+	case LV_DIR_RIGHT:
+		// if (ui_current_screen != SCREEN_WATCH)
+		//	ui_transform_screen(SCREEN_WATCH, LV_SCR_LOAD_ANIM_OVER_LEFT, 100);
+		break;
+	case LV_DIR_TOP:
+		// if (ui_current_screen != SCREEN_WATCH)
+		// 	ui_transform_screen(SCREEN_W	ATCH, LV_SCR_LOAD_ANIM_OVER_TOP, 100);
+		break;
+	case LV_DIR_BOTTOM:
+		// if (ui_current_screen != SCREEN_HOME)
+		// 	ui_transform_screen(SCREEN_HOME, LV_SCR_LOAD_ANIM_OVER_TOP, 100);
+		// break;
+	default:
+		break;
+	}
 }
 
 
-void InitUI(void)
+void ui_update_timer(lv_timer_t * timer)
+{
+	
+}
+void ui_init( void )
 {
 	lv_disp_t *dispp = lv_disp_get_default();
 	lv_theme_t *theme = lv_theme_default_init(dispp, lv_palette_main(LV_PALETTE_BLUE), lv_palette_main(LV_PALETTE_RED), true, LV_FONT_DEFAULT);
-	lv_disp_set_theme(dispp, theme);
-	ui_splash_screen_init();
-
+    lv_disp_set_theme(dispp, theme);
+	ui_splash_init();
+    ui_create_messagebox();
+	ui_create_top_bar();
+	ui_create_messagebox();
 	
-	lv_scr_load_anim(ui_splash_screen, LV_SCR_LOAD_ANIM_FADE_ON, 300, 0, false);
+	// lv_scr_load_anim(ui_splash_screen, LV_SCR_LOAD_ANIM_FADE_ON, 300, 0, false);
+	lv_disp_load_scr(ui_splash_screen);
+	
+	// // Switch to the main application if OTA has not been started
+	// vTaskDelay(pdMS_TO_TICKS(2000));
+	
+	// lv_scr_load_anim(ui_home_screen, LV_SCR_LOAD_ANIM_FADE_ON, 300, 0, false);
+	lv_timer_create(ui_update_timer, 1000, NULL);
 }
+
+

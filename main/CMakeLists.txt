@@ -10,35 +10,10 @@ idf_component_register(
 					tone/tone.c
 					task_manager/task_manager.c
                 	ui/ui.c
+					ui/ui-helpers.c
                     ui/ui-splash.c
-                	ui/images/btn_about.c
-                	ui/images/copyright.c
-                	ui/images/pct_ge.c
-                    ui/images/pctge_mark.c
-                	ui/images/btnhome-01.c
-                	ui/images/btnhome-02.c
-                	ui/images/btnhome-03.c
-                	ui/images/btnhome-04.c
-                	ui/images/btnhome-06.c
-                	ui/images/folder.c
-                	ui/images/pct.c
-                    ui/images/wifi.c
-                    ui/images/meg.c
-                    ui/images/secs.c
-                    ui/images/simple.c
-                	ui/images/bluetooth.c
-                	ui/images/settings.c
-                	ui/images/variables.c
-                	ui/images/btnhome-05.c
-                	ui/images/btnhome-07.c
-                	ui/images/btnhome-08.c
-                	ui/images/controllers.c
-                	ui/images/fan.c
-                	ui/images/heater.c
-                	ui/images/mtr.c
-                    ui/images/plot.c
-                    ui/images/secs.c
-                	ui/font/en_12.c
+					ui/images/hyrel_logo.c
+					ui/font/en_12.c
                 	ui/font/en_16.c
                 	ui/font/en_bold_16.c
                 	ui/font/en_bold_20.c

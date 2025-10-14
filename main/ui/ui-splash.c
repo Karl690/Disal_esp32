@@ -2,28 +2,34 @@
 #include "ui-splash.h"
 lv_obj_t* ui_splash_screen;
 
-lv_obj_t* label;
-bool isToggle = false;
-void ui_splash_button_cb(lv_event_t* e)
-{
-	isToggle = !isToggle;
-	lv_label_set_text(label, isToggle ? "TOUCHED" : "NO TOUCH");
-}
+LV_IMG_DECLARE(img_hyrel_logo);
 
-///////////////////// SCREENS ////////////////////
-void ui_splash_screen_init(void)
-{
-	ui_splash_screen = lv_obj_create(NULL);
-	lv_obj_clear_flag(ui_splash_screen, LV_OBJ_FLAG_SCROLLABLE); /// Flagsui_splash_screen = lv_obj_create(NULL);
-	lv_obj_clear_flag(ui_splash_screen, LV_OBJ_FLAG_SCROLLABLE); /// Flags
-	lv_obj_set_style_bg_color(ui_splash_screen, lv_color_hex(UI_BACKGROUND_COLOR), LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_opa(ui_splash_screen, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+uint8_t ui_splash_wait_countdown = 2;
+void ui_splash_timer_cb(lv_timer_t* timer)
+ {
+	if (lv_obj_is_visible(ui_splash_screen)) {
+		ESP_LOGI("UI", "Splash wait %d", ui_splash_wait_countdown);
+		if (ui_splash_wait_countdown == 0) ui_transform_screen(SCREEN_PCNT, LV_SCR_LOAD_ANIM_MOVE_BOTTOM, 300);
+
+		ui_splash_wait_countdown --;
+	}
 	
-	label = ui_create_label(ui_splash_screen, "NO TOUCH", &mono_regualr_20);
-	lv_obj_align(label, LV_ALIGN_TOP_MID, 0, 20);
-	lv_obj_t *btn = ui_create_button(ui_splash_screen, "TEST1", 80, 40, 3, &mono_regualr_20, ui_splash_button_cb, NULL);
-	lv_obj_align(btn, LV_ALIGN_CENTER, 0, 0);
+ }
+void ui_splash_init(void)
+{
+	ui_splash_screen = ui_helpers_create_screen();
+	lv_obj_add_event_cb(ui_splash_screen, ui_gesture_event_handler, LV_EVENT_GESTURE, NULL);
+	
+	lv_obj_t * img = lv_img_create(ui_splash_screen);
+	lv_image_set_src(img, &img_hyrel_logo);
+	lv_obj_align(img, LV_ALIGN_CENTER, 0, -10);
 
-	lv_obj_t* banner = ui_create_label(ui_splash_screen, "HYREL 2025", &mono_regualr_20);
-	lv_obj_align(banner, LV_ALIGN_BOTTOM_MID, 0, -20);
+	lv_obj_t* obj = ui_helpers_create_label(ui_splash_screen, "Hyrel3D", &lv_font_montserrat_24);
+	lv_obj_set_style_text_color(obj, lv_color_hex(0xff9a1c), LV_PART_MAIN);
+	lv_obj_align(obj, LV_ALIGN_BOTTOM_MID, 0, -60);
+
+	obj = ui_helpers_create_label(ui_splash_screen, "Copyright 2025", &lv_font_montserrat_12);
+	lv_obj_align(obj, LV_ALIGN_BOTTOM_MID, 0, -30);
+	
+	/// lv_timer_create(ui_splash_timer_cb, 1000, NULL);
 }
