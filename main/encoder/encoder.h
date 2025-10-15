@@ -12,3 +12,5 @@ extern volatile int32_t encoder_pos;
 extern volatile ENC_ACTION_TYPE encoder_action;
 void encoder_init();
 void encoder_check();
+int32_t encoder_read();
+bool encoder_get_status();

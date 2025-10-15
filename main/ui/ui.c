@@ -1,28 +1,34 @@
 #include "ui.h"
 #include "ui-helpers.h"
 #include "ui-splash.h"
-
+#include "ui-home.h"
+#include "ui-pcnt.h"
 
 ui_msg_t ui_msgbox;
 ui_top_bar_t ui_top_bar;
 lv_obj_t* ui_active_screen;
 SCREEN_TYPE ui_current_screen;
+SCREEN_TYPE ui_previous_screen;
 char ui_temp_buffer[256];
 
 void ui_transform_screen(SCREEN_TYPE screen, lv_scr_load_anim_t anim, uint16_t time)
 {
 	ESP_LOGI("UI", "Transform screen %d -> %d", ui_current_screen, screen);
 	if (lv_obj_is_visible(ui_msgbox.window)) lv_obj_add_flag(ui_msgbox.window, LV_OBJ_FLAG_HIDDEN);
+	ui_previous_screen = ui_current_screen;
 	switch ((uint8_t)screen)
 	{
+	case SCREEN_HOME:
+		ui_active_screen = ui_home_screen;
+		break;
+	case SCREEN_PCNT:
+		ui_active_screen = ui_pcnt_screen;
+		break;
 	default:
 		return;
 	}
-	lv_obj_clear_flag(ui_top_bar.panel, LV_OBJ_FLAG_HIDDEN);
 	ui_current_screen = screen;
 	lv_obj_set_parent(ui_msgbox.window, ui_active_screen);
-	lv_obj_set_parent(ui_top_bar.panel, ui_active_screen);
-	lv_obj_move_foreground(ui_top_bar.panel);
 	lv_scr_load_anim(ui_active_screen, anim, time, 0, false);
 }
 void ui_messagebox_delay_timer(lv_timer_t * timer)
@@ -110,13 +116,11 @@ void ui_gesture_event_handler(lv_event_t * e)
 
 	switch (gesture_dir) {
 	case LV_DIR_LEFT:
-		// if (ui_current_screen != SCREEN_WATCH)
-		//  	ui_transform_screen(SCREEN_HOME, LV_SCR_LOAD_ANIM_OVER_LEFT, 100);
+		ui_transform_screen(ui_previous_screen, LV_SCR_LOAD_ANIM_OVER_LEFT, 100);
 		break;
-
 	case LV_DIR_RIGHT:
-		// if (ui_current_screen != SCREEN_WATCH)
-		//	ui_transform_screen(SCREEN_WATCH, LV_SCR_LOAD_ANIM_OVER_LEFT, 100);
+		if (ui_current_screen != SCREEN_HOME)
+		 	ui_transform_screen(SCREEN_HOME, LV_SCR_LOAD_ANIM_OVER_LEFT, 100);
 		break;
 	case LV_DIR_TOP:
 		// if (ui_current_screen != SCREEN_WATCH)
@@ -142,9 +146,10 @@ void ui_init( void )
 	lv_theme_t *theme = lv_theme_default_init(dispp, lv_palette_main(LV_PALETTE_BLUE), lv_palette_main(LV_PALETTE_RED), true, LV_FONT_DEFAULT);
     lv_disp_set_theme(dispp, theme);
 	ui_splash_init();
+	ui_home_init();
+	ui_pcnt_init();
     ui_create_messagebox();
-	ui_create_top_bar();
-	ui_create_messagebox();
+	// ui_create_top_bar();
 	
 	// lv_scr_load_anim(ui_splash_screen, LV_SCR_LOAD_ANIM_FADE_ON, 300, 0, false);
 	lv_disp_load_scr(ui_splash_screen);

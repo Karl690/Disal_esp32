@@ -2,6 +2,7 @@
 #include "encoder.h"
 #include "tone/tone.h"
 volatile int32_t encoder_pos = 0;
+volatile bool encoder_pressed = false;
 volatile ENC_ACTION_TYPE encoder_action;
 // Interrupt handler for encoder rotation
 static void IRAM_ATTR encoder_isr_handler(void *arg) {
@@ -14,6 +15,8 @@ static void IRAM_ATTR encoder_isr_handler(void *arg) {
         encoder_pos--; // Counterclockwise
         encoder_action = ENC_ACTION_COUNTERCLOCKWISE;
     }
+
+    
 }
 
 
@@ -41,6 +44,15 @@ void encoder_init() {
     // Install ISR for encoder rotation
     gpio_install_isr_service(0);
     gpio_isr_handler_add(PIN_ENCODER_A, encoder_isr_handler, NULL);
+}
+
+int32_t encoder_read() {
+    return encoder_pos;
+}
+
+bool encoder_get_status() {
+    encoder_pressed = gpio_get_level(PIN_ENCODER_BUTTON) == 0 ? true : false;
+    return encoder_pressed;
 }
 
 void encoder_check() {

@@ -25,7 +25,7 @@
 
 #define PIN_ENCODER_A       (gpio_num_t)41
 #define PIN_ENCODER_B       (gpio_num_t)40
-#define PIN_ENCODER_BUTTON  (gpio_num_t)0
+#define PIN_ENCODER_BUTTON  (gpio_num_t)42
 #define PIN_TP_I2C_SCL      (gpio_num_t)12
 #define PIN_TP_I2C_SDA      (gpio_num_t)11
 #define PIN_TP_INT          (gpio_num_t)14

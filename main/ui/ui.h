@@ -21,6 +21,7 @@
 
 typedef enum
 {
+	SCREEN_HOME,
 	SCREEN_PCNT,
 } SCREEN_TYPE;
 

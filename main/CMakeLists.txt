@@ -8,10 +8,13 @@ idf_component_register(
 					encoder/encoder.c
 					ledc/ledc.c
 					tone/tone.c
+					pcnt/pcnt.c
 					task_manager/task_manager.c
                 	ui/ui.c
 					ui/ui-helpers.c
                     ui/ui-splash.c
+					ui/ui-home.c
+					ui/ui-pcnt.c
 					ui/images/hyrel_logo.c
 					ui/font/en_12.c
                 	ui/font/en_16.c

@@ -1,9 +1,12 @@
 #include "task_manager.h"
 #include "encoder/encoder.h"
+#include "pcnt/pcnt.h"
+
 volatile uint16_t SliceCnt = 0; // current slice being processed
 volatile uint16_t SliceOffset = 0;
 volatile uint32_t HeartBeat;
 esp_timer_handle_t systickTimer;
+
 const PFUNC F1000HZ[NUM_1000HZ] =
 {
 	Spare,
@@ -42,13 +45,13 @@ const PFUNC F10HZ[NUM_10HZ] =
 
 const PFUNC F1HZ[NUM_1HZ] =
 {
-	encoder_check,
 	Spare,
 	Spare,
 	Spare,
 	Spare,
 	Spare,
 	Spare,
+	pcnt_get_value,
 	BlinkHeartBeat,
 };
 /*
@@ -107,7 +110,6 @@ void taskamanger_task(void* arg)
 
 void task_manager_init()
 {
-	//xTaskCreatePinnedToCore(taskamanger_task, "taskamanger_task", 1024 * 2, NULL, 10, NULL, 0);
 	esp_timer_create_args_t systickTimerArgs = {
 		.callback = func_SystickCallback,
 		.arg = NULL,
@@ -115,5 +117,5 @@ void task_manager_init()
 		.name = "systick timer"
 	};
 	esp_timer_create(&systickTimerArgs, &systickTimer); // Create the timer
-	esp_timer_start_periodic(systickTimer, 250); // Start the timer in automatic reload mode with a period of 125 microseconds
+	esp_timer_start_periodic(systickTimer, 244); // Start the timer in automatic reload mode with a period of 125 microseconds
 }

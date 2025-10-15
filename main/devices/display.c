@@ -1,4 +1,6 @@
 #include "display.h"
+#include "encoder/encoder.h"
+
 #include <lvgl.h>
 /*** Setup screen resolution for LVGL ***/
 static const uint16_t screenWidth =  SCREEN_WIDTH;// TFT_WIDTH;
@@ -11,6 +13,8 @@ static TaskHandle_t g_lvgl_task_handle;
 bool force_touch = 0;
 bool force_touched = 0;
 uint16_t force_touchx, force_touchy;
+int32_t enc_diff = 0;
+bool enc_pressed = false;
 
 esp_err_t InitLCDAndLVGL()
 {
@@ -45,27 +49,19 @@ esp_err_t InitLCDAndLVGL()
 	lv_display_set_buffers(disp, buf1, NULL, SCREEN_WIDTH * BUFF_SIZE * sizeof(lv_color_t), LV_DISPLAY_RENDER_MODE_PARTIAL);
 #endif
     lv_display_set_flush_cb(disp, display_flush);
-	ESP_LOGI(TAG, "Deep color -----------------: %d", LV_COLOR_DEPTH);
+
 	lv_indev_t *indev = lv_indev_create();
     lv_indev_set_type(indev, LV_INDEV_TYPE_POINTER);
     lv_indev_set_read_cb(indev, touchpad_read);
-	/*** LVGL : Setup & Initialize the display device driver ***/
-	// static lv_disp_drv_t disp_drv;
-	// lv_disp_drv_init(&disp_drv);
-	// disp_drv.hor_res = screenWidth;
-	// disp_drv.ver_res = screenHeight;
-	// disp_drv.flush_cb = display_flush;
-	// disp_drv.draw_buf = &draw_buf;
-	// disp_drv.sw_rotate = 1;
-	// disp = lv_disp_drv_register(&disp_drv);
 
-	//*** LVGL : Setup & Initialize the input device driver ***
-	// static lv_indev_drv_t indev_drv;
-	// lv_indev_drv_init(&indev_drv);
-	// indev_drv.type = LV_INDEV_TYPE_POINTER;
-	// indev_drv.read_cb = touchpad_read;
-	// lv_indev_drv_register(&indev_drv);
-
+	lv_indev_t * enc_indev = lv_indev_create();
+    lv_indev_set_type(enc_indev, LV_INDEV_TYPE_ENCODER);
+    lv_indev_set_read_cb(enc_indev, encoder_read_cb);
+	lv_group_t *group = lv_group_create();
+	lv_indev_set_group(enc_indev, group);
+	lv_group_set_editing	(group, true);
+	lv_group_set_default(group);
+	
 	/* Create and start a periodic timer interrupt to call lv_tick_inc */
 	const esp_timer_create_args_t lv_periodic_timer_args = {
 		.callback = &lv_tick_task,
@@ -151,4 +147,16 @@ void touchpad_read(lv_indev_t * indev, lv_indev_data_t * data)
 		data->point.y = touchY;
 	}
 	force_touch = false;
+}
+
+void encoder_read_cb(lv_indev_t * indev, lv_indev_data_t * data) {
+    int32_t new_pos = encoder_read();
+    data->enc_diff = new_pos - enc_diff;	
+	enc_diff = new_pos;
+	if (data->enc_diff != 0) ESP_LOGI(TAG, "Encoder diff: %d", data->enc_diff);
+    
+
+    enc_pressed = encoder_get_status();
+	if (enc_pressed) ESP_LOGI(TAG, "Encoder pressed");
+    data->state = enc_pressed ? LV_INDEV_STATE_PRESSED : LV_INDEV_STATE_RELEASED;
 }

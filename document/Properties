@@ -1,0 +1,26 @@
+<SOAP-ENV:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:clr="http://schemas.microsoft.com/soap/encoding/clr/1.0" SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+<SOAP-ENV:Body>
+<SOAP-ENC:Array SOAP-ENC:arrayType="xsd:string[20]">
+<item id="ref-2">300440</item>
+<item id="ref-3">esp32 S3 round lcd module </item>
+<item id="ref-4">DIGI-KEY</item>
+<item id="ref-5">2221-K130-V11-ND</item>
+<item id="ref-6">https://www.digikey.com/en/products/detail/m5stack-technology-co-ltd/K130-V11/26267933?so=92726420&#38;content=productdetail_US&#38;mkt_tok=MDI4LVNYSy01MDcAAAGak-zJdKsfRJvYxlSwn9afNt5IKA0-BPB1lSztUP53UeXF0JI-nI-dukLYZKIf0boOMoGmtpfUtGcFh_Z_Ggor5iOtR3xWo_YLVPt0OMVmFg</item>
+<item href="#ref-4"/>
+<item id="ref-7">CCM1059-ND</item>
+<item id="ref-8">http://tracker.marinsm.com/rd?tid=906576940&#38;cid=5042&#38;pcrid=6802306773&#38;lp=http://search.digikey.com/scripts/DkSearch/dksus.dll?site=us&#38;lang=en&#38;keywords=6edl1scm&#38;WT.term=6edl1scm&#38;WT.source=google&#38;WT.campaign=Filters&#38;WT.medium=cpc&#38;WT.content=text&#38;WT.mc_id=Filters&#38;WT.srch=1</item>
+<item id="ref-9">York Industries</item>
+<item id="ref-10">-</item>
+<item id="ref-11">https://docs.m5stack.com/en/core/M5Dial%20V1.1</item>
+<item href="#ref-9"/>
+<item id="ref-12">-</item>
+<item id="ref-13">https://uiflow2.m5stack.com/</item>
+<item id="ref-14">-</item>
+<item id="ref-15">-</item>
+<item id="ref-16">-</item>
+<item id="ref-17">0</item>
+<item id="ref-18">1</item>
+<item id="ref-19">1</item>
+</SOAP-ENC:Array>
+</SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

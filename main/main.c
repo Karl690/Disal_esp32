@@ -7,7 +7,9 @@
 #include "button/button.h"
 #include "wifi/wifi.h"
 #include "encoder/encoder.h"
+#include "pcnt/pcnt.h"
 #include "task_manager/task_manager.h"
+
 const char *TAG = "HYREL";
 bool IsInitialized = false;
 
@@ -29,11 +31,14 @@ extern "C" void app_main(void)
 	InitLCDAndLVGL();
 	ui_init();
 
-	// wifi_init();
+	wifi_init();
 	ledc_init();
 	tone_init();
-	encoder_init();
 	// button_init();
+	encoder_init();
+	
+	pcnt_init();
+	
 	IsInitialized = true;
 
 	tone_play(4000, 30);

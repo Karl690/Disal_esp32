@@ -82,6 +82,6 @@ void gui_task(void *args);
 
 // Touchpad callback to read the touchpad
 void touchpad_read(lv_indev_t * indev, lv_indev_data_t * data);
-
+void encoder_read_cb(lv_indev_t * indev, lv_indev_data_t * data);
 bool display_dump_buffer();
 void display_reset_capture_buffer();

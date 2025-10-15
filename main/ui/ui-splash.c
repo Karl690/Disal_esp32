@@ -31,5 +31,5 @@ void ui_splash_init(void)
 	obj = ui_helpers_create_label(ui_splash_screen, "Copyright 2025", &lv_font_montserrat_12);
 	lv_obj_align(obj, LV_ALIGN_BOTTOM_MID, 0, -30);
 	
-	/// lv_timer_create(ui_splash_timer_cb, 1000, NULL);
+	lv_timer_create(ui_splash_timer_cb, 1000, NULL);
 }
