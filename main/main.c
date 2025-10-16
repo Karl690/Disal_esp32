@@ -1,10 +1,11 @@
 #include "main.h"
-#include "devices/display.h"
 #include "ui/ui.h"
-#include "ledc/ledc.h"
+// #include "ledc/ledc.h"
 #include "gpio/gpio.h"
-#include "tone/tone.h"
-#include "button/button.h"
+#include "lcd/lcd.h"
+// #include "tone/tone.h"
+// #include "button/button.h"
+#include "bsp/m5dial.h"
 #include "wifi/wifi.h"
 #include "encoder/encoder.h"
 #include "pcnt/pcnt.h"
@@ -26,31 +27,27 @@ extern "C" void app_main(void)
 	ESP_ERROR_CHECK(ret);
 	
 	IsInitialized = false;
-	powerOn();
-	
-	InitLCDAndLVGL();
+	// powerOn();
+	lcd_init();
+	bsp_display_lock(0);	
 	ui_init();
-
-	wifi_init();
-	ledc_init();
-	tone_init();
-	// button_init();
-	encoder_init();
+	bsp_display_unlock();
+	// wifi_init();
 	
-	pcnt_init();
+	// pcnt_init();
 	
 	IsInitialized = true;
 
-	tone_play(4000, 30);
+	// tone_play(4000, 30);
 
 	task_manager_init();
-	while (1) {
-		if (gpio_get_level(PIN_ENCODER_BUTTON) == 0) {
-			ESP_LOGI(TAG, "Button pressed");
-			tone_play(7000, 1000);
-		} 
-		vTaskDelay(100 / portTICK_PERIOD_MS);
-	}
+	// while (1) {
+	// 	if (gpio_get_level(PIN_ENCODER_BUTTON) == 0) {
+	// 		ESP_LOGI(TAG, "Button pressed");
+	// 		// tone_play(7000, 1000);
+	// 	} 
+	// 	vTaskDelay(100 / portTICK_PERIOD_MS);
+	// }
 }
 
 

@@ -1,7 +1,6 @@
 #pragma once
 #include "esp_log.h"
 #include "nvs_flash.h"
-
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
