@@ -13,6 +13,8 @@
 #define UI_BUTTON_NORMAL_FG_COLOR		0xFFFFFF
 #define UI_BUTTON_NORMAL_BR_COLOR		0x023389
 
+#define UI_LABEL_COLOR						0x888888
+
 #define UI_MSG_INFO_COLOR					0x8DC63F
 #define UI_MSG_WARNING_COLOR				0xFBB040
 #define UI_MSG_ERROR_COLOR					0xF15A29
@@ -48,6 +50,13 @@ typedef struct
 	lv_obj_t* wifi;
 	lv_obj_t* notification;
 }ui_top_bar_t;
+
+typedef struct {
+	lv_group_t* group;
+    lv_obj_t* group_obj;
+    lv_obj_t* focus;
+    uint8_t  focus_index;
+} ui_base_t;
 
 extern SCREEN_TYPE ui_current_screen;
 extern char ui_temp_buffer[256];

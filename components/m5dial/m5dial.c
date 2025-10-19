@@ -330,7 +330,6 @@ static lv_indev_t *bsp_display_indev_encoder_init(lv_display_t *disp)
         .encoder_a_b = &bsp_encoder_a_b_config,
         .encoder_enter = encoder_btn
     };
-    ESP_LOGI("falcon", "Display initialized-4");
     return lvgl_port_add_encoder(&encoder);
 }
 
@@ -370,12 +369,9 @@ lv_display_t *bsp_display_start_with_config(const bsp_display_cfg_t *cfg)
     BSP_ERROR_CHECK_RETURN_NULL(bsp_display_brightness_init());
 
     BSP_NULL_CHECK(disp = bsp_display_lcd_init(cfg), NULL);
-    ESP_LOGI("falcon", "Display initialized-1");
     BSP_NULL_CHECK(disp_indev_touch = bsp_display_indev_touch_init(disp), NULL);
-    ESP_LOGI("falcon", "Display initialized-2");
     BSP_NULL_CHECK(disp_indev_enc = bsp_display_indev_encoder_init(disp), NULL);
-    ESP_LOGI("falcon", "Display initialized-3");
-
+    
     return disp;
 }
 

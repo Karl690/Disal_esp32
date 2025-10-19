@@ -627,7 +627,7 @@ esp_err_t iot_button_register_power_save_cb(const button_power_save_config_t *co
 esp_err_t iot_button_create(const button_config_t *config, const button_driver_t *driver, button_handle_t *ret_button)
 {
     if (!g_head_handle) {
-        ESP_LOGI(TAG, "IoT Button Version: %d.%d.%d", BUTTON_VER_MAJOR, BUTTON_VER_MINOR, BUTTON_VER_PATCH);
+        ESP_LOGI(TAG, "IoT Button Version ----2: %d.%d.%d", BUTTON_VER_MAJOR, BUTTON_VER_MINOR, BUTTON_VER_PATCH);
     }
     ESP_RETURN_ON_FALSE(driver && config && ret_button, ESP_ERR_INVALID_ARG, TAG, "Invalid argument");
     button_dev_t *btn = (button_dev_t *) calloc(1, sizeof(button_dev_t));

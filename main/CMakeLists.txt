@@ -5,7 +5,12 @@ idf_component_register(
                 	wifi/wifi.c
 					gpio/gpio.c
 					pcnt/pcnt.c
+					storage/partition.c
+                	storage/nvs.c
 					task_manager/task_manager.c
+					utils/utils.c
+					tone/tone.c
+					ledc/ledc.c
                 	ui/ui.c
 					ui/ui-helpers.c
                     ui/ui-splash.c
@@ -22,12 +27,7 @@ idf_component_register(
                 	ui/font/mono_bold_24.c
                 	ui/font/mono_bold_28.c
                 	ui/font/mono_bold_32.c
-                	ui/font/mono_digital_20.c
-                	ui/font/mono_digital_24.c
-                	ui/font/mono_regualr_12.c
-                	ui/font/mono_regualr_16.c
-                	ui/font/mono_regualr_20.c
-                	ui/font/mono_regualr_14.c                	
+                	ui/font/mono_regular_24.c                	
                 INCLUDE_DIRS "."
                 REQUIRES
 					nvs_flash

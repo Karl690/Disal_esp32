@@ -1,5 +1,4 @@
 #include "task_manager.h"
-#include "encoder/encoder.h"
 #include "pcnt/pcnt.h"
 
 volatile uint16_t SliceCnt = 0; // current slice being processed

@@ -14,6 +14,7 @@ void lcd_init() {
     lv_display_t * disp = bsp_display_start_with_config(&cfg);
     bsp_display_backlight_on();
     bsp_display_rotate(disp, LV_DISPLAY_ROTATION_90);
+
 }
 
 void lcd_task_suspend(void) {

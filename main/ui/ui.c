@@ -3,19 +3,33 @@
 #include "ui-splash.h"
 #include "ui-home.h"
 #include "ui-pcnt.h"
+#include "bsp/m5dial.h"
 
 ui_msg_t ui_msgbox;
 ui_top_bar_t ui_top_bar;
 lv_obj_t* ui_active_screen;
+lv_group_t * ui_main_group;
 SCREEN_TYPE ui_current_screen;
 SCREEN_TYPE ui_previous_screen;
 char ui_temp_buffer[256];
+
+
+void ui_encoder_cb(lv_event_t* e)
+{
+	lv_event_code_t code = lv_event_get_code(e);
+	lv_obj_t * obj = lv_event_get_target_obj(e);
+	ESP_LOGI("UI", "Encoder event %d", code);
+	
+}
 
 void ui_transform_screen(SCREEN_TYPE screen, lv_scr_load_anim_t anim, uint16_t time)
 {
 	ESP_LOGI("UI", "Transform screen %d -> %d", ui_current_screen, screen);
 	if (lv_obj_is_visible(ui_msgbox.window)) lv_obj_add_flag(ui_msgbox.window, LV_OBJ_FLAG_HIDDEN);
 	ui_previous_screen = ui_current_screen;
+	if (ui_active_screen) {
+		lv_indev_set_group(bsp_display_get_input_dev(), NULL);
+	}
 	switch ((uint8_t)screen)
 	{
 	case SCREEN_HOME:
@@ -27,9 +41,18 @@ void ui_transform_screen(SCREEN_TYPE screen, lv_scr_load_anim_t anim, uint16_t t
 	default:
 		return;
 	}
-	ui_current_screen = screen;
-	lv_obj_set_parent(ui_msgbox.window, ui_active_screen);
-	lv_scr_load_anim(ui_active_screen, anim, time, 0, false);
+	if (ui_active_screen) {
+		ui_current_screen = screen;
+		lv_obj_set_parent(ui_msgbox.window, ui_active_screen);
+		lv_scr_load_anim(ui_active_screen, anim, time, 0, false);
+		// lv_disp_load_scr(ui_active_screen);
+		ui_base_t* user_data = (ui_base_t*)lv_obj_get_user_data(ui_active_screen);
+		if (user_data) {
+			lv_indev_set_group(bsp_display_get_input_dev(), user_data->group);
+			lv_group_set_default(user_data->group);
+			lv_group_set_editing(user_data->group, true);	
+		}
+	}
 }
 void ui_messagebox_delay_timer(lv_timer_t * timer)
 {
@@ -113,7 +136,7 @@ void ui_create_top_bar()
 void ui_gesture_event_handler(lv_event_t * e)
 {
 	lv_dir_t gesture_dir = lv_indev_get_gesture_dir(lv_indev_get_act());
-
+	ESP_LOGI("UI", "Gesture detected: %d", gesture_dir);
 	switch (gesture_dir) {
 	case LV_DIR_LEFT:
 		ui_transform_screen(ui_previous_screen, LV_SCR_LOAD_ANIM_OVER_LEFT, 100);
@@ -151,9 +174,11 @@ void ui_init( void )
     ui_create_messagebox();
 	// ui_create_top_bar();
 	
+	
+	
 	// lv_scr_load_anim(ui_splash_screen, LV_SCR_LOAD_ANIM_FADE_ON, 300, 0, false);
 	lv_disp_load_scr(ui_splash_screen);
-	
+
 	// // Switch to the main application if OTA has not been started
 	// vTaskDelay(pdMS_TO_TICKS(2000));
 	
