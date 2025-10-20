@@ -1,6 +1,6 @@
 #include "main.h"
 #include "ui/ui.h"
-// #include "ledc/ledc.h"
+#include "ledc/ledc.h"
 #include "gpio/gpio.h"
 #include "lcd/lcd.h"
 #include "storage/partition.h"
@@ -38,6 +38,7 @@ extern "C" void app_main(void)
 	wifi_init();
 	
 	pcnt_init();
+	ledc_init();
 	tone_init();
 	IsInitialized = true;
 }

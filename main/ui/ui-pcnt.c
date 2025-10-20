@@ -42,7 +42,7 @@ void ui_pcnt_encoder_rotary_cb(lv_event_t* e)
 
 
 	if (key_code != LV_KEY_RIGHT && key_code != LV_KEY_LEFT) return;
-	tone_play(2000, 200);
+	tone_play(direction == 1? 2000: 3000, 200);
 	
 	switch (ui_pcnt.focus_index)
 	{
@@ -73,7 +73,7 @@ void ui_pcnt_encoder_rotary_cb(lv_event_t* e)
 		}
 		break;
 	case 2:
-		ui_transform_screen(SCREEN_HOME, LV_SCR_LOAD_ANIM_MOVE_LEFT, 300);
+		// ui_transform_screen(SCREEN_HOME, LV_SCR_LOAD_ANIM_MOVE_LEFT, 300);
 		break;
 	default:
 		break;
