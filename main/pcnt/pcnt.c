@@ -5,7 +5,7 @@
 PCNT_INFO pcnt_info = {0, 0, 0};
 void pcnt_init(void) {
     gpio_config_t io_conf = {
-        .pin_bit_mask = (1ULL << PCNT_INPUT_PIN),
+        .pin_bit_mask = (1ULL << PCNT_INPUT_PIN_01) | (1ULL << PCNT_INPUT_PIN_02),
         .mode = GPIO_MODE_INPUT,
         .pull_up_en = GPIO_PULLUP_DISABLE,
         .pull_down_en = GPIO_PULLDOWN_DISABLE,
@@ -24,7 +24,7 @@ void pcnt_init(void) {
     gpio_set_level((gpio_num_t)PCNT_CTRL_PIN, 1); // turn on
 
     pcnt_config_t pcnt_config = {
-        .pulse_gpio_num = PCNT_INPUT_PIN,  // plus input pin
+        .pulse_gpio_num = PCNT_INPUT_PIN_01,  // plus input pin
         .ctrl_gpio_num = PCNT_PIN_NOT_USED,  // control pin (not used)
         .lctrl_mode = PCNT_MODE_KEEP,      // low level control mode
         .hctrl_mode = PCNT_MODE_KEEP,      // high level control mode

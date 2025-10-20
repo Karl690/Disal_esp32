@@ -1,8 +1,10 @@
 #pragma once
 #include "main.h"
 
-#define PCNT_INPUT_PIN GPIO_NUM_2
+#define PCNT_INPUT_PIN_01 GPIO_NUM_2
+#define PCNT_INPUT_PIN_02 GPIO_NUM_13
 #define PCNT_CTRL_PIN GPIO_NUM_1
+
 #define PCNT_UNIT PCNT_UNIT_0
 #define SAMPLE_TIME_MS 1000
 
