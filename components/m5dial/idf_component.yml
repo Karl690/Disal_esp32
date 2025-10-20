@@ -1,0 +1,27 @@
+dependencies:
+  button:
+    public: true
+    version: ^4
+  esp_lcd_touch_ft5x06: ^1
+  espressif/esp_lcd_gc9a01:
+    public: true
+    version: ^2
+  espressif/esp_lvgl_port:
+    public: true
+    version: ^2
+  idf: '>=5.3'
+  knob:
+    public: true
+    version: ^1
+description: Board Support Package (BSP) for M5Dial
+repository: git://github.com/espressif/esp-bsp.git
+repository_info:
+  commit_sha: 1bd663be5317bfc4457335011889eec5db33098d
+  path: bsp/m5dial
+tags:
+- bsp
+- M5Stack
+targets:
+- esp32s3
+url: https://github.com/espressif/esp-bsp/tree/master/bsp/m5dial
+version: 3.0.1

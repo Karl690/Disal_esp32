@@ -9,11 +9,8 @@ static void tone_task(void*){
     xQueueReceive(_tone_queue, &tone_msg, portMAX_DELAY);
     switch(tone_msg.tone_cmd){
       case TONE_START:
-        ESP_LOGI(TAG, "Task received from queue TONE_START: frequency=%u Hz, duration=%lu ms", tone_msg.frequency, tone_msg.duration);
-
         ledc_tone(tone_msg.frequency, tone_msg.duration);
         break;
-
       case TONE_END:
         ledc_tone(0, 0);
         break;
@@ -55,11 +52,11 @@ int tone_init() {
 }
 
 void tone_play(unsigned int frequency, unsigned long duration){
-    tone_msg_t tone_msg = {
-        .tone_cmd = TONE_START,
-        .frequency = frequency,
-        .duration = duration,
-    };
-    xQueueSend(_tone_queue, &tone_msg, portMAX_DELAY);
-    return;
+  tone_msg_t tone_msg = {
+      .tone_cmd = TONE_START,
+      .frequency = frequency,
+      .duration = duration,
+  };
+  xQueueSend(_tone_queue, &tone_msg, portMAX_DELAY);
+  return;
 }

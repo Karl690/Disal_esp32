@@ -55,10 +55,10 @@ void pcnt_get_value() {
     if (pcnt_info.enabled == 0) return;
     ESP_ERROR_CHECK(pcnt_get_counter_value(PCNT_UNIT, &pcnt_info.count));
     pcnt_info.temperature = (float)pcnt_info.count / 1000.0;
-    // if (pcnt_info.count < systemconfig.pcnt.programmed_temperature) {
-    //     gpio_set_level((gpio_num_t)systemconfig.pcnt.ctrl_pin, 1); // turn on
-    // } else {
-    //     gpio_set_level((gpio_num_t)systemconfig.pcnt.ctrl_pin, 0); // turn off
-    // }
+    if (pcnt_info.count < systemconfig.pcnt.programmed_temperature) {
+        gpio_set_level((gpio_num_t)systemconfig.pcnt.ctrl_pin, 1); // turn on
+    } else {
+        gpio_set_level((gpio_num_t)systemconfig.pcnt.ctrl_pin, 0); // turn off
+    }
     ESP_ERROR_CHECK(pcnt_counter_clear(PCNT_UNIT));
 }

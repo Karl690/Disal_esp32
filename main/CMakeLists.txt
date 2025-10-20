@@ -1,15 +1,16 @@
 idf_component_register(
                 SRCS
                 	main.c
-                	devices/display.c
-					wifi/wifi.c
+					lcd/lcd.c
+                	wifi/wifi.c
 					gpio/gpio.c
-					button/button.c
-					encoder/encoder.c
-					ledc/ledc.c
-					tone/tone.c
 					pcnt/pcnt.c
+					storage/partition.c
+                	storage/nvs.c
 					task_manager/task_manager.c
+					utils/utils.c
+					tone/tone.c
+					ledc/ledc.c
                 	ui/ui.c
 					ui/ui-helpers.c
                     ui/ui-splash.c
@@ -26,16 +27,12 @@ idf_component_register(
                 	ui/font/mono_bold_24.c
                 	ui/font/mono_bold_28.c
                 	ui/font/mono_bold_32.c
-                	ui/font/mono_digital_20.c
-                	ui/font/mono_digital_24.c
-                	ui/font/mono_regualr_12.c
-                	ui/font/mono_regualr_16.c
-                	ui/font/mono_regualr_20.c
-                	ui/font/mono_regualr_14.c                	
+                	ui/font/mono_regular_24.c                	
                 INCLUDE_DIRS "."
                 REQUIRES
-                	LovyanGFX
+					nvs_flash
                 	lvgl
+					m5dial
                 	app_update
                 	esp_event
                 	esp_timer

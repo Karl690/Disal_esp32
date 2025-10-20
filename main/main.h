@@ -1,7 +1,6 @@
 #pragma once
 #include "esp_log.h"
 #include "nvs_flash.h"
-
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
@@ -19,6 +18,8 @@
 #include "esp_system.h"
 #include "esp_timer.h"
 #include <driver/gpio.h>
+#include "config.h"
+#include "tone/tone.h"
 
 #define PIN_PWR_HOLDING     (gpio_num_t)46
 #define PIN_PWR_WAKE_UP     (gpio_num_t)42
@@ -37,6 +38,6 @@
 
 
 extern const char *TAG;
-
-void powerOn();
-void powerOff();
+extern SYSTEMCONFIG systemconfig;
+bool load_configuration();
+bool save_configuration();
