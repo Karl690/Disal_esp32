@@ -23,6 +23,10 @@ typedef struct
     float bat_volt; //in V
 } PCNT_INFO;
 
+typedef struct {
+	uint16_t    adcRaw; // expected adcValue for specified temp
+	int16_t      value; // if temperature (s10.5 format - 1/32 degree) at specified adcValue; position, just value, etc
+} AdcTableStruct;
 
 
 extern PCNT_INFO pcnt_info;

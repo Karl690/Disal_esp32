@@ -11,7 +11,13 @@
         "system_error": "cpp",
         "regex": "cpp",
         "bitset": "c",
-        "chrono": "c"
+        "chrono": "c",
+        "ratio": "cpp",
+        "array": "cpp",
+        "functional": "cpp",
+        "tuple": "cpp",
+        "type_traits": "cpp",
+        "utility": "cpp"
     },
     "idf.espIdfPathWin": "C:\\Users\\falcon\\esp\\v5.4.2\\esp-idf",
     "idf.toolsPathWin": "C:\\Users\\falcon\\.espressif",

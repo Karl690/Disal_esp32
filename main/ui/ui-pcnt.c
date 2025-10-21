@@ -11,9 +11,9 @@ void ui_pcnt_timer_cb(lv_timer_t * timer)
 {
 	if (systemconfig.pcnt.enabled)
 	{
-		lv_label_set_text_fmt(ui_pcnt.v_bat, "%d V", pcnt_info.bat_volt);
+		lv_label_set_text_fmt(ui_pcnt.v_bat, "%dV", pcnt_info.bat_volt);
 		lv_label_set_text_fmt(ui_pcnt.actual_temperature, "%d˚C", pcnt_info.temperature);
-		lv_label_set_text_fmt(ui_pcnt.duty, "%d%", pcnt_info.duty);
+		lv_label_set_text_fmt(ui_pcnt.duty, "%d%%", pcnt_info.duty);
 	}
 }
 
@@ -163,7 +163,7 @@ void ui_pcnt_init(void)
 	obj = ui_helpers_create_label(ui_pcnt_screen, "V BAT:", &lv_font_montserrat_14);
 	lv_obj_set_style_text_color(obj, lv_color_hex(UI_LABEL_COLOR), LV_PART_MAIN);
 	lv_obj_set_pos(obj, 55, y+5);
-	obj = ui_helpers_create_label(ui_pcnt_screen, "0%", &mono_regular_24);
+	obj = ui_helpers_create_label(ui_pcnt_screen, "0V", &mono_regular_24);
 	ui_pcnt.v_bat = obj;
 	lv_obj_set_pos(obj, 150, y);
 	
