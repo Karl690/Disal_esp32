@@ -49,6 +49,8 @@ bool load_configuration()
 	if (!utils_valid_pins(systemconfig.pcnt.pcnt_pin_01)) systemconfig.pcnt.pcnt_pin_01 = PCNT_INPUT_PIN_01;
 	if (!utils_valid_pins(systemconfig.pcnt.pcnt_pin_02)) systemconfig.pcnt.pcnt_pin_02 = PCNT_INPUT_PIN_02;
 	if (!utils_valid_pins(systemconfig.pcnt.ctrl_pin)) systemconfig.pcnt.ctrl_pin = PCNT_CTRL_PIN;
+	if (systemconfig.pcnt.programmed_temperature == 0x0) systemconfig.pcnt.programmed_temperature = 25;
+	if (systemconfig.pcnt.enabled == 0xFF) systemconfig.pcnt.enabled = 0;
 	
 	if (systemconfig.bluetooth.status && systemconfig.wifi.status) {
 		// disable wifi if bluetooth is enabled

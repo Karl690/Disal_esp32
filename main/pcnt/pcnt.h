@@ -5,20 +5,31 @@
 #define PCNT_INPUT_PIN_02 GPIO_NUM_13
 #define PCNT_CTRL_PIN GPIO_NUM_1
 
-#define PCNT_UNIT PCNT_UNIT_0
-#define SAMPLE_TIME_MS 1000
+
+#define SAMPLE_TIME_MS      1000
+
+#define PCNT_BATTERY_SCAL_VALUE  1.0
+#define PCNT_RTD_SCAL_VALUE      1.0
+#define PCNT_K_CONSTANT       1.0
 
 typedef struct 
 {
-    int16_t count;
+    int16_t count01;
+    int16_t count02;
     float temperature; //'C    
     int16_t freq; //in Hz
-    uint8_t enabled; //0: disable, 1: enable
+    float duty; //in %
+    float rtd_volt; //in V
+    float bat_volt; //in V
 } PCNT_INFO;
 
+
+
 extern PCNT_INFO pcnt_info;
+
 
 void pcnt_init(void);
 void pcnt_start(void);
 void pcnt_stop(void);
 void pcnt_get_value();
+float pcnt_convert_temperature(float voltage);

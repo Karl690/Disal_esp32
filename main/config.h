@@ -39,8 +39,8 @@ typedef struct
 {
 	uint8_t pcnt_pin_01;
 	uint8_t pcnt_pin_02;
+	uint8_t enabled;
 	uint8_t ctrl_pin;
-	uint8_t enable;
 	uint16_t programmed_temperature;
 } PCNT_CONFIG;
 

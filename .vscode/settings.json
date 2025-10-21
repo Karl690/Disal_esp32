@@ -9,7 +9,9 @@
         "task_manager.h": "c",
         "future": "cpp",
         "system_error": "cpp",
-        "regex": "cpp"
+        "regex": "cpp",
+        "bitset": "c",
+        "chrono": "c"
     },
     "idf.espIdfPathWin": "C:\\Users\\falcon\\esp\\v5.4.2\\esp-idf",
     "idf.toolsPathWin": "C:\\Users\\falcon\\.espressif",

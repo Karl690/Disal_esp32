@@ -9,9 +9,9 @@ typedef struct {
     lv_obj_t* focus;
     lv_obj_t* programmed_temperature;
     lv_obj_t* enabled;
-    lv_obj_t* freq;
     lv_obj_t* actual_temperature;
     lv_obj_t* duty;
+    lv_obj_t* v_bat;
     uint8_t  focus_index;
 } UI_PCNT;
 
