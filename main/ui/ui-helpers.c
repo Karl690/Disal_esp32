@@ -139,11 +139,12 @@ void ui_helpers_button_set_opa(lv_obj_t* button, uint8_t opa)
 }
 
 
-void ui_helpers_button_color(lv_obj_t* button, uint32_t bg, uint32_t fg)
+void ui_helpers_button_color(lv_obj_t* button, uint32_t bg, uint32_t fg, uint32_t br)
 {
 	lv_obj_t* label = lv_obj_get_child(button, 0);
 	if (label)	lv_obj_set_style_text_color(label, lv_color_hex(fg), LV_PART_MAIN);
 	lv_obj_set_style_bg_color(button, lv_color_hex(bg), LV_PART_MAIN);
+	lv_obj_set_style_border_color(button, lv_color_hex(br != 0? bg: br), LV_PART_MAIN);
 }
 
 void ui_helpers_button_text(lv_obj_t* button, const char* text)

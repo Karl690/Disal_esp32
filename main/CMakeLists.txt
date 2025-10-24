@@ -15,7 +15,9 @@ idf_component_register(
 					ui/ui-helpers.c
                     ui/ui-splash.c
 					ui/ui-home.c
-					ui/ui-pcnt.c
+					ui/ui-control.c
+					ui/ui-settings.c
+					ui/ui-diagnostics.c
 					ui/images/hyrel_logo.c
 					ui/font/en_12.c
                 	ui/font/en_16.c

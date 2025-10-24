@@ -10,7 +10,8 @@
 
 #define PCNT_BATTERY_SCAL_VALUE  1.0
 #define PCNT_RTD_SCAL_VALUE      1.0
-#define PCNT_K_CONSTANT       1.0
+#define PCNT_TEMP_SCAL_VALUE       1.0
+#define PCNT_DUTY_SCAL_VALUE       1.0
 
 typedef struct 
 {

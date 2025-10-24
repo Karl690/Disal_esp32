@@ -9,11 +9,23 @@
 
 #define UI_BACKGROUND_COLOR			0x000000
 #define UI_FOREGROUND_COLOR			0xFFFFFF
-#define UI_BUTTON_NORMAL_BG_COLOR		0x052A93
-#define UI_BUTTON_NORMAL_FG_COLOR		0xFFFFFF
-#define UI_BUTTON_NORMAL_BR_COLOR		0x023389
+#define UI_BUTTON_NORMAL_BG_COLOR		0x000baff
+#define UI_BUTTON_NORMAL_FG_COLOR		0x000000
+#define UI_BUTTON_NORMAL_BR_COLOR		0x31c6fe
+#define UI_BUTTON_ACTIVE_BG_COLOR		0xfc565e
+#define UI_BUTTON_ACTIVE_BR_COLOR		0xfc565e
+#define UI_BUTTON_ACTIVE_FG_COLOR		0xffffff
 
 #define UI_LABEL_COLOR						0x888888
+
+#define UI_ITEM_NORMAL_BG_COLOR			0x111111
+#define UI_ITEM_NORMAL_BR_COLOR			0x222222
+
+#define UI_ITEM_FOCUS_BG_COLOR			0x111111
+#define UI_ITEM_FOCUS_BR_COLOR			0x003b72
+
+#define UI_ITEM_SELECT_BG_COLOR			0x0356a3
+#define UI_ITEM_SELECT_BR_COLOR			0x0573da
 
 #define UI_MSG_INFO_COLOR					0x8DC63F
 #define UI_MSG_WARNING_COLOR				0xFBB040
@@ -24,7 +36,11 @@
 typedef enum
 {
 	SCREEN_HOME,
-	SCREEN_PCNT,
+	SCREEN_CONTROL,
+	SCREEN_SETTINGS,
+	SCREEN_DIAGNOSTICS,
+	SCREEN_BLE,
+	SCREEN_WIFI,
 } SCREEN_TYPE;
 
 typedef enum
@@ -55,7 +71,8 @@ typedef struct {
 	lv_group_t* group;
     lv_obj_t* group_obj;
     lv_obj_t* focus;
-    uint8_t  focus_index;
+    int8_t  focus_index;
+	lv_obj_t* title;
 } ui_base_t;
 
 extern SCREEN_TYPE ui_current_screen;

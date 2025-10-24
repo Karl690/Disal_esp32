@@ -15,7 +15,7 @@ lv_obj_t* ui_helpers_create_button(lv_obj_t* parent,
     void* event_data);
 
 void ui_helpers_button_set_opa(lv_obj_t* button, uint8_t opa);
-void ui_helpers_button_color(lv_obj_t* button, uint32_t bg, uint32_t fg);
+void ui_helpers_button_color(lv_obj_t* button, uint32_t bg, uint32_t fg, uint32_t br);
 void ui_helpers_button_text(lv_obj_t* button, const char* text);
 void ui_helpers_textarea_set_nmuber(lv_obj_t* obj, int number);
 void ui_helpers_label_set_nmuber(lv_obj_t* obj, int number);

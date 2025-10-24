@@ -42,6 +42,10 @@ typedef struct
 	uint8_t enabled;
 	uint8_t ctrl_pin;
 	uint16_t programmed_temperature;
+	float temp_scale;
+	float battery_scale;
+	float rtd_scale;
+	float duty_scale;
 } PCNT_CONFIG;
 
 typedef struct
@@ -59,3 +63,12 @@ typedef struct
 	SDCARD_CONFIG sdcard;
 	PCNT_CONFIG pcnt;
 }SYSTEMCONFIG;
+
+
+typedef enum
+{
+	VALUE_TYPE_INT,
+	VALUE_TYPE_FLOAT,
+	VALUE_TYPE_STRING,
+	VALUE_TYPE_BOOL,
+} VALUE_TYPE;

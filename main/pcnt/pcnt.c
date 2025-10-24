@@ -97,13 +97,13 @@ void pcnt_get_value() {
     if (systemconfig.pcnt.enabled == 0) return;
     ESP_ERROR_CHECK(pcnt_get_counter_value(PCNT_UNIT_0, &pcnt_info.count01));
     ESP_ERROR_CHECK(pcnt_get_counter_value(PCNT_UNIT_1, &pcnt_info.count02));
-    pcnt_info.bat_volt = (float)pcnt_info.count01 * PCNT_BATTERY_SCAL_VALUE;
-    pcnt_info.rtd_volt = (float)pcnt_info.count02 * PCNT_RTD_SCAL_VALUE;
+    pcnt_info.bat_volt = (float)pcnt_info.count01 * systemconfig.pcnt.battery_scale;
+    pcnt_info.rtd_volt = (float)pcnt_info.count02 * systemconfig.pcnt.rtd_scale;
     pcnt_info.temperature = pcnt_convert_temperature(RtdTable_1K, pcnt_info.rtd_volt);
     float deltaTemp = systemconfig.pcnt.programmed_temperature - pcnt_info.temperature;
     if (deltaTemp != 0) {
-        pcnt_info.duty = deltaTemp * PCNT_K_CONSTANT;
-        // gpio_set_level((gpio_num_t)systemconfig.pcnt.ctrl_pin, 1); // turn on
+        pcnt_info.duty = deltaTemp * systemconfig.pcnt.temp_scale;
+        gpio_set_level((gpio_num_t)systemconfig.pcnt.ctrl_pin, 1); // turn on
     } else {
         pcnt_info.duty = 0;
         gpio_set_level((gpio_num_t)systemconfig.pcnt.ctrl_pin, 0); // turn off
@@ -130,5 +130,5 @@ float pcnt_convert_temperature( const AdcTableStruct* adcTable, float voltage) {
 
 	float a = (adcTable[rightIndex].value - adcTable[leftIndex].value) / (float)(adcTable[rightIndex].adcRaw - adcTable[leftIndex].adcRaw);
 	float y = a * (voltage - adcTable[leftIndex].adcRaw) + adcTable[leftIndex].value;
-    return y * PCNT_K_CONSTANT;
+    return y * PCNT_TEMP_SCAL_VALUE;
 }
