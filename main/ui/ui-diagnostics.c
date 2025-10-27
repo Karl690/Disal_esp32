@@ -45,7 +45,10 @@ void ui_diag_update_focus_items() {
 	}
 	lv_label_set_text(ui_diag.up_focus, ui_diag.start_index == 0 ? "": LV_SYMBOL_UP);
 	lv_label_set_text(ui_diag.down_focus, ui_diag.start_index > 0 && ui_diag.focus_index < ui_diag_data_size -1 ? LV_SYMBOL_DOWN: "");
-	lv_obj_set_style_text_color(ui_diag.title, lv_color_hex(ui_diag.focus_index == ui_diag_data_size? 0x00ff00: 0xffffff), LV_PART_MAIN); 
+	if (ui_diag.select_index == ui_diag_data_size)
+		lv_obj_set_style_text_color(ui_diag.title, lv_color_hex(UI_ITEM_SELECT_FG_COLOR), LV_PART_MAIN); 
+	else
+		lv_obj_set_style_text_color(ui_diag.title, lv_color_hex(ui_diag.focus_index == ui_diag_data_size? UI_ITEM_FOCUS_FG_COLOR: UI_ITEM_NORMAL_FG_COLOR), LV_PART_MAIN); 
 }
 
 void ui_diag_update_item(UI_DIAG_ITEM* ui_item, uint8_t status) {
@@ -53,14 +56,20 @@ void ui_diag_update_item(UI_DIAG_ITEM* ui_item, uint8_t status) {
 	case 0: // NORMAL
 		lv_obj_set_style_bg_color(ui_item->panel, lv_color_hex(UI_ITEM_NORMAL_BG_COLOR), LV_PART_MAIN);
 		lv_obj_set_style_border_color(ui_item->panel, lv_color_hex(UI_ITEM_NORMAL_BR_COLOR), LV_PART_MAIN);
+		lv_obj_set_style_text_color(ui_item->title, lv_color_hex(UI_ITEM_NORMAL_FG_COLOR), LV_PART_MAIN);
+		lv_obj_set_style_text_color(ui_item->value, lv_color_hex(UI_ITEM_NORMAL_FG_COLOR), LV_PART_MAIN);
 		break;
 	case 1: // FOCUS
 		lv_obj_set_style_bg_color(ui_item->panel, lv_color_hex(UI_ITEM_FOCUS_BG_COLOR), LV_PART_MAIN);
 		lv_obj_set_style_border_color(ui_item->panel, lv_color_hex(UI_ITEM_FOCUS_BR_COLOR), LV_PART_MAIN);
+		lv_obj_set_style_text_color(ui_item->title, lv_color_hex(UI_ITEM_FOCUS_FG_COLOR), LV_PART_MAIN);
+		lv_obj_set_style_text_color(ui_item->value, lv_color_hex(UI_ITEM_FOCUS_FG_COLOR), LV_PART_MAIN);
 		break;
 	case 2: // SELECT
 		lv_obj_set_style_bg_color(ui_item->panel, lv_color_hex(UI_ITEM_SELECT_BG_COLOR), LV_PART_MAIN);
 		lv_obj_set_style_border_color(ui_item->panel, lv_color_hex(UI_ITEM_SELECT_BR_COLOR), LV_PART_MAIN);
+		lv_obj_set_style_text_color(ui_item->title, lv_color_hex(UI_ITEM_FOCUS_FG_COLOR), LV_PART_MAIN);
+		lv_obj_set_style_text_color(ui_item->value, lv_color_hex(UI_ITEM_FOCUS_FG_COLOR), LV_PART_MAIN);
 		break;
 	}
 }
@@ -108,6 +117,9 @@ void ui_diag_encoder_rotary_cb(lv_event_t* e)
 		}
 		if (ui_diag.focus_index != ui_diag_data_size) {
 			ui_diag_update_item(&ui_diag_ui_items[ui_diag.focus_index -ui_diag.start_index], ui_diag.select_index == -1? 1: 2);	
+			lv_obj_set_style_text_color(ui_diag.title, lv_color_hex(UI_ITEM_NORMAL_FG_COLOR), LV_PART_MAIN);	
+		}else {
+			lv_obj_set_style_text_color(ui_diag.title, lv_color_hex(UI_ITEM_SELECT_FG_COLOR), LV_PART_MAIN);	
 		}
 		return;
 	} else {
@@ -167,6 +179,7 @@ void ui_diag_init(void)
 	ui_diag.group = group;
 	lv_obj_t* obj = ui_helpers_create_label(ui_diag_screen, LV_SYMBOL_WARNING " DIAG", &lv_font_montserrat_20);
 	lv_obj_align(obj, LV_ALIGN_TOP_MID, 0, 15);
+	lv_obj_set_style_text_color(obj, lv_color_hex(UI_ITEM_NORMAL_FG_COLOR), LV_PART_MAIN);
 	lv_obj_add_event_cb(obj, ui_diag_encoder_rotary_cb, LV_EVENT_KEY, NULL);
 	lv_group_add_obj(group, obj);
 	ui_diag.title = obj;
@@ -198,9 +211,11 @@ void ui_diag_init(void)
 		lv_obj_align(panel, LV_ALIGN_TOP_MID, 0, y);
 		ui_item->panel = panel;
 		obj = ui_helpers_create_label(panel, "Title: ", &lv_font_montserrat_16);
+		lv_obj_set_style_text_color(obj, lv_color_hex(UI_ITEM_NORMAL_FG_COLOR), LV_PART_MAIN);
 		lv_obj_align(obj, LV_ALIGN_LEFT_MID, 10, 0);
 		ui_item->title = obj;
 		obj = ui_helpers_create_label(panel, "0.0", &lv_font_montserrat_20);
+		lv_obj_set_style_text_color(obj, lv_color_hex(UI_ITEM_NORMAL_FG_COLOR), LV_PART_MAIN);
 		lv_obj_align(obj, LV_ALIGN_RIGHT_MID, -20, 0);
 		ui_item->value = obj;
 		y += step;

@@ -20,12 +20,15 @@
 
 #define UI_ITEM_NORMAL_BG_COLOR			0x111111
 #define UI_ITEM_NORMAL_BR_COLOR			0x222222
+#define UI_ITEM_NORMAL_FG_COLOR			0x888888
 
 #define UI_ITEM_FOCUS_BG_COLOR			0x111111
 #define UI_ITEM_FOCUS_BR_COLOR			0x003b72
+#define UI_ITEM_FOCUS_FG_COLOR			0x00e1ef
 
 #define UI_ITEM_SELECT_BG_COLOR			0x0356a3
 #define UI_ITEM_SELECT_BR_COLOR			0x0573da
+#define UI_ITEM_SELECT_FG_COLOR			0x81fa00
 
 #define UI_MSG_INFO_COLOR					0x8DC63F
 #define UI_MSG_WARNING_COLOR				0xFBB040
@@ -72,6 +75,7 @@ typedef struct {
     lv_obj_t* group_obj;
     lv_obj_t* focus;
     int8_t  focus_index;
+	int8_t select_index;
 	lv_obj_t* title;
 } ui_base_t;
 

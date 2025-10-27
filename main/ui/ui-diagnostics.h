@@ -7,8 +7,8 @@ typedef struct {
     lv_obj_t* group_obj;
     lv_obj_t* focus;
     int8_t  focus_index;
-    lv_obj_t* title;
     int8_t select_index;
+    lv_obj_t* title;
     int8_t start_index;
     lv_obj_t* up_focus;
     lv_obj_t* down_focus;
