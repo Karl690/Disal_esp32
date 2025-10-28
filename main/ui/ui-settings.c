@@ -94,7 +94,7 @@ void ui_settings_update_value(UI_SETTINGS_ITEM* ui_item, int direction) {
 	default:
 		break;
 	};
-	save_configuration();
+	//save_configuration();
 }
 
 void ui_settings_encoder_rotary_cb(lv_event_t* e)
