@@ -41,7 +41,6 @@ void ui_home_encoder_rotary_cb(lv_event_t* e)
 			ui_helpers_button_color(ui_home.buttons[ui_home.focus_index], UI_BUTTON_ACTIVE_BG_COLOR, UI_BUTTON_ACTIVE_FG_COLOR, UI_BUTTON_ACTIVE_BR_COLOR);	
 		ESP_LOGI("UI", "Home focus index %d", ui_home.focus_index);
 	}
-	
 }
 
 void ui_home_init(void)

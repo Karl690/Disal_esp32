@@ -119,7 +119,8 @@ void ui_diag_encoder_rotary_cb(lv_event_t* e)
 			ui_diag_update_item(&ui_diag_ui_items[ui_diag.focus_index -ui_diag.start_index], ui_diag.select_index == -1? 1: 2);	
 			lv_obj_set_style_text_color(ui_diag.title, lv_color_hex(UI_ITEM_NORMAL_FG_COLOR), LV_PART_MAIN);	
 		}else {
-			lv_obj_set_style_text_color(ui_diag.title, lv_color_hex(UI_ITEM_SELECT_FG_COLOR), LV_PART_MAIN);	
+			ui_diag.select_index = -1;
+			ui_transform_screen(SCREEN_HOME, LV_SCR_LOAD_ANIM_MOVE_LEFT, 300);
 		}
 		return;
 	} else {
@@ -128,10 +129,7 @@ void ui_diag_encoder_rotary_cb(lv_event_t* e)
 			if (ui_diag.select_index < ui_diag_data_size) {
 
 			}
-			if (ui_diag.select_index == ui_diag_data_size) {
-				ui_transform_screen(SCREEN_HOME, LV_SCR_LOAD_ANIM_MOVE_LEFT, 300);
-				return;
-			} else {
+			if (ui_diag.select_index < ui_diag_data_size) {
 				// change value
 				// if (ui_diag.focus_index == ui_diag_data_size) {
 				// 	ui_transform_screen(SCREEN_HOME, LV_SCR_LOAD_ANIM_MOVE_LEFT, 300);

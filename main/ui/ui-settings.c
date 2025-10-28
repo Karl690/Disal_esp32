@@ -117,25 +117,16 @@ void ui_settings_encoder_rotary_cb(lv_event_t* e)
 			ui_settings_update_item(&ui_settings_ui_items[ui_settings.focus_index -ui_settings.start_index], ui_settings.select_index == -1? 1: 2);	
 			lv_obj_set_style_text_color(ui_settings.title, lv_color_hex(UI_ITEM_NORMAL_FG_COLOR), LV_PART_MAIN);	
 		} else {
-			lv_obj_set_style_text_color(ui_settings.title, lv_color_hex(UI_ITEM_SELECT_FG_COLOR), LV_PART_MAIN);	
+			ui_settings.select_index = -1;
+			ui_transform_screen(SCREEN_HOME, LV_SCR_LOAD_ANIM_MOVE_LEFT, 300);
 		}
 		return;
 	} else {
 		tone_play(direction == 1? 2000: 3000, 60);
 		if (ui_settings.select_index >= 0) {
 			if (ui_settings.select_index < ui_settings_data_size) {
-
-			}
-			if (ui_settings.select_index == ui_settings_data_size) {
-				ui_transform_screen(SCREEN_HOME, LV_SCR_LOAD_ANIM_MOVE_LEFT, 300);
-				return;
-			} else {
 				// change value
-				if (ui_settings.focus_index == ui_settings_data_size) {
-					ui_transform_screen(SCREEN_HOME, LV_SCR_LOAD_ANIM_MOVE_LEFT, 300);
-				} else {
-					ui_settings_update_value(&ui_settings_ui_items[ui_settings.focus_index - ui_settings.start_index], direction);
-				}
+				ui_settings_update_value(&ui_settings_ui_items[ui_settings.focus_index - ui_settings.start_index], direction);
 			}
 		} else {
 			// change focus

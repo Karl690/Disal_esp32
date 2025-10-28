@@ -29,18 +29,20 @@ void ui_control_encoder_rotary_cb(lv_event_t* e)
 
 	if (key_code == LV_KEY_ENTER) {
 		tone_play(6000, 200);
-		// if (ui_control.select_index == 2) lv_obj_set_style_text_color(ui_control.title, lv_color_hex(UI_ITEM_NORMAL_FG_COLOR), LV_PART_MAIN);
+		if (ui_control.focus_index == 2) {
+			ui_transform_screen(SCREEN_HOME, LV_SCR_LOAD_ANIM_MOVE_LEFT, 300);
+			return;
+		}
 		if (ui_control.select_index == ui_control.focus_index) {
 			ui_control.select_index = -1;
 			lv_obj_set_style_text_color(ui_control.focus, lv_color_hex(UI_ITEM_FOCUS_FG_COLOR), LV_PART_MAIN);
-			
 		} else {
 			ui_control.select_index = ui_control.focus_index;		
-			if (ui_control.select_index == 2) lv_obj_set_style_text_color(ui_control.title, lv_color_hex(UI_ITEM_SELECT_FG_COLOR), LV_PART_MAIN);
-			else lv_obj_set_style_text_color(ui_control.focus, lv_color_hex(UI_ITEM_SELECT_FG_COLOR), LV_PART_MAIN);
+			lv_obj_set_style_text_color(ui_control.focus, lv_color_hex(UI_ITEM_SELECT_FG_COLOR), LV_PART_MAIN);
 		}
 		return;
 	} else { // rotary event
+		tone_play(direction == 1? 2000: 3000, 60);
 		if (ui_control.select_index == -1) {
 			// change focus
 			ui_control.focus_index += direction;
@@ -87,9 +89,6 @@ void ui_control_encoder_rotary_cb(lv_event_t* e)
 				}
 				ui_helpers_button_color(ui_control.enabled, systemconfig.pcnt.enabled == 1? 0x00ff00 : 0xff0000, UI_FOREGROUND_COLOR, 0);
 				ui_helpers_button_text(ui_control.enabled, systemconfig.pcnt.enabled == 1 ? "ON" : "OFF");
-				break;
-			case 2:
-				ui_transform_screen(SCREEN_HOME, LV_SCR_LOAD_ANIM_MOVE_LEFT, 300);
 				break;
 			}
 		}
