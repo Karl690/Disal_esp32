@@ -28,7 +28,7 @@ void ui_control_encoder_rotary_cb(lv_event_t* e)
 
 
 	if (key_code == LV_KEY_ENTER) {
-		tone_play(6000, 200);
+		tone_play(6000, 10);
 		if (ui_control.focus_index == 2) {
 			ui_transform_screen(SCREEN_HOME, LV_SCR_LOAD_ANIM_MOVE_LEFT, 300);
 			return;
@@ -42,7 +42,7 @@ void ui_control_encoder_rotary_cb(lv_event_t* e)
 		}
 		return;
 	} else { // rotary event
-		tone_play(direction == 1? 2000: 3000, 60);
+		tone_play(direction == 1? 2000: 3000, 10);
 		if (ui_control.select_index == -1) {
 			// change focus
 			ui_control.focus_index += direction;

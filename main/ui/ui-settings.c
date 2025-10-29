@@ -106,7 +106,7 @@ void ui_settings_encoder_rotary_cb(lv_event_t* e)
 	int direction = (key_code == LV_KEY_RIGHT) ? 1 : -1;
 
 	if (key_code == LV_KEY_ENTER) {
-		tone_play(6000, 200);
+		tone_play(6000, 10);
 		if (ui_settings.select_index == ui_settings.focus_index) {
 			ui_settings.select_index = -1;
 		} else {
