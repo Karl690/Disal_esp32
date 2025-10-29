@@ -1,8 +1,8 @@
 #include "task_manager.h"
 #include "pcnt/pcnt.h"
 
-volatile uint16_t SliceCnt = 0; // current slice being processed
-volatile uint16_t SliceOffset = 0;
+volatile uint32_t SliceCnt = 0; // current slice being processed
+volatile uint32_t SliceOffset = 0;
 volatile uint32_t HeartBeat;
 esp_timer_handle_t systickTimer;
 

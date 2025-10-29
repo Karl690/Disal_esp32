@@ -1,5 +1,6 @@
 #include "ui.h"
 #include "ui-settings.h"
+#include "task_manager/task_manager.h"
 lv_obj_t* ui_settings_screen;
 UI_SETTINGS ui_settings;
 UI_SETTINGS_DATA_ITEM ui_settings_data[] = {
@@ -10,6 +11,11 @@ UI_SETTINGS_DATA_ITEM ui_settings_data[] = {
 #define UI_SETTINGS_ITEM_SIZE 3
 UI_SETTINGS_ITEM ui_settings_ui_items[UI_SETTINGS_ITEM_SIZE];
 const uint8_t ui_settings_data_size = sizeof(ui_settings_data) / sizeof(UI_SETTINGS_DATA_ITEM);
+
+uint32_t ui_settings_current_time;
+uint32_t ui_settings_prev_time ;
+uint8_t ui_settings_click_count = 0;
+
 ///////////////////// SCREENS ////////////////////
 
 void ui_settings_update_focus_items() {
@@ -107,6 +113,21 @@ void ui_settings_encoder_rotary_cb(lv_event_t* e)
 
 	if (key_code == LV_KEY_ENTER) {
 		tone_play(6000, 10);
+		ui_settings_current_time = SliceCnt;
+		if (ui_settings_current_time - ui_settings_prev_time < 5000) {
+			ui_settings_click_count ++;
+		} else {
+			ui_settings_click_count = 0;
+		}
+		ui_settings_prev_time = ui_settings_current_time;
+		
+		if (ui_settings_click_count > 2) {
+			save_configuration();
+			ui_show_messagebox(MESSAGEBOX_INFO, "Save successfully.", 1000);
+			ui_settings_click_count = 0;
+			return;
+		} 
+		if (ui_settings_click_count != 0) return;
 		if (ui_settings.select_index == ui_settings.focus_index) {
 			ui_settings.select_index = -1;
 		} else {

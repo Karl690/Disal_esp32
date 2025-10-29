@@ -1,13 +1,17 @@
 #include "ui.h"
 #include "pcnt/pcnt.h"
 #include "ui-control.h"
-
+#include "task_manager/task_manager.h"
 lv_obj_t* ui_control_screen;
 UI_CONTROL ui_control;
 
 LV_FONT_DECLARE(mono_regular_24);
 
 const uint8_t ui_control_data_size = 2;
+uint32_t ui_control_current_time;
+uint32_t ui_control_prev_time ;
+uint8_t ui_control_click_count = 0;
+
 void ui_control_timer_cb(lv_timer_t * timer)
 {
 	if (systemconfig.pcnt.enabled)
@@ -29,6 +33,20 @@ void ui_control_encoder_rotary_cb(lv_event_t* e)
 
 	if (key_code == LV_KEY_ENTER) {
 		tone_play(6000, 10);
+		ui_control_current_time = SliceCnt;
+		if (ui_control_current_time - ui_control_prev_time < 5000) {
+			ui_control_click_count ++;
+		} else {
+			ui_control_click_count = 0;
+		}
+		ui_control_prev_time = ui_control_current_time;
+		
+		if (ui_control_click_count > 2) {
+			save_configuration();
+			ui_show_messagebox(MESSAGEBOX_INFO, "Save successfully.", 1000);
+			ui_control_click_count = 0;
+			return;
+		}
 		if (ui_control.focus_index == 2) {
 			ui_transform_screen(SCREEN_HOME, LV_SCR_LOAD_ANIM_MOVE_LEFT, 300);
 			return;

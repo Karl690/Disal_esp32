@@ -17,7 +17,7 @@ enum {
 
 
 extern volatile uint32_t HeartBeat;
-
+extern volatile uint32_t SliceCnt;
 void func_SystickCallback(void* arg);
 void Spare(void);
 void BlinkHeartBeat(void);

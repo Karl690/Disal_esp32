@@ -40,6 +40,7 @@ extern "C" void app_main(void)
 	pcnt_init();
 	ledc_init();
 	tone_init();
+	task_manager_init();
 	IsInitialized = true;
 }
 
