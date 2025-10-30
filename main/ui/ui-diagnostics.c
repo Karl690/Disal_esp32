@@ -1,5 +1,7 @@
 #include "ui.h"
 #include "ui-diagnostics.h"
+#include "RevisionHistory.h"
+
 lv_obj_t* ui_diag_screen;
 UI_DIAG ui_diag;
 UI_DIAG_DATA_ITEM ui_diag_data[] = {
@@ -175,7 +177,7 @@ void ui_diag_init(void)
 
 	lv_group_t* group = lv_group_create();
 	ui_diag.group = group;
-	lv_obj_t* obj = ui_helpers_create_label(ui_diag_screen, LV_SYMBOL_WARNING " DIAG", &lv_font_montserrat_20);
+	lv_obj_t* obj = ui_helpers_create_label(ui_diag_screen, LV_SYMBOL_WARNING " " MajorStep, &lv_font_montserrat_20);
 	lv_obj_align(obj, LV_ALIGN_TOP_MID, 0, 15);
 	lv_obj_set_style_text_color(obj, lv_color_hex(UI_ITEM_NORMAL_FG_COLOR), LV_PART_MAIN);
 	lv_obj_add_event_cb(obj, ui_diag_encoder_rotary_cb, LV_EVENT_KEY, NULL);
