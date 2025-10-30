@@ -89,7 +89,7 @@ void ui_settings_update_value(UI_SETTINGS_ITEM* ui_item, int direction) {
 		lv_label_set_text_fmt(ui_item->value, "%d", *(int*)item->value_ptr);
 		break;
 	case VALUE_TYPE_FLOAT:
-		*(float*)item->value_ptr += direction;
+		*(float*)item->value_ptr += direction * 0.01;
 		sprintf(ui_temp_buffer, "%.2f", *(float*)(item->value_ptr));
 		lv_label_set_text(ui_item->value, ui_temp_buffer);
 		break;
