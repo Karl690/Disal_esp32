@@ -123,7 +123,14 @@ void ui_settings_encoder_rotary_cb(lv_event_t* e)
 		if (ui_settings_click_count > 1) {
 			save_configuration();
 			ui_show_messagebox(MESSAGEBOX_INFO, "Save successfully.", 1000);
+			ui_settings.focus_index = ui_settings_data_size;
+			if (ui_settings.select_index != ui_settings_data_size) {
+				ui_settings_update_item(&ui_settings_ui_items[ui_settings.select_index -ui_settings.start_index], 0);	
+				lv_obj_set_style_text_color(ui_settings.title, lv_color_hex(UI_ITEM_NORMAL_FG_COLOR), LV_PART_MAIN);	
+			}
+			ui_settings.select_index = -1;
 			ui_settings_click_count = 0;
+			ui_settings_update_focus_items();
 			return;
 		} 
 		if (ui_settings_click_count != 0) return;

@@ -58,6 +58,9 @@ void ui_control_encoder_rotary_cb(lv_event_t* e)
 		if (ui_control_click_count > 1) {
 			save_configuration();
 			ui_show_messagebox(MESSAGEBOX_INFO, "Save successfully.", 1000);
+			ui_control.focus_index = ui_control_data_size;
+			lv_obj_set_y(ui_control.focus, -20 );
+			lv_obj_set_style_text_color(ui_control.title, lv_color_hex(UI_ITEM_FOCUS_FG_COLOR), LV_PART_MAIN);
 			ui_control_click_count = 0;
 			return;
 		}
