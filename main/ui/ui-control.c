@@ -22,6 +22,20 @@ void ui_control_timer_cb(lv_timer_t * timer)
 	}
 }
 
+void ui_control_click_cb(lv_event_t* e) {
+	systemconfig.pcnt.enabled = systemconfig.pcnt.enabled == 1 ? 0 : 1;
+	if (systemconfig.pcnt.enabled == 1) {
+		pcnt_start();
+		ui_show_messagebox(MESSAGEBOX_INFO, "PCNT Enabled", 1000);
+	}
+	else {
+		pcnt_stop();
+		ui_show_messagebox(MESSAGEBOX_INFO, "PCNT Disabled", 1000);
+	}
+	ui_helpers_button_color(ui_control.enabled, systemconfig.pcnt.enabled == 1? 0x00ff00 : 0xff0000, UI_FOREGROUND_COLOR, 0);
+	ui_helpers_button_text(ui_control.enabled, systemconfig.pcnt.enabled == 1 ? "ON" : "OFF");
+}
+
 void ui_control_encoder_rotary_cb(lv_event_t* e)
 {
 	lv_obj_t * obj = lv_event_get_target_obj(e);
@@ -41,7 +55,7 @@ void ui_control_encoder_rotary_cb(lv_event_t* e)
 		}
 		ui_control_prev_time = ui_control_current_time;
 		
-		if (ui_control_click_count > 2) {
+		if (ui_control_click_count > 1) {
 			save_configuration();
 			ui_show_messagebox(MESSAGEBOX_INFO, "Save successfully.", 1000);
 			ui_control_click_count = 0;
@@ -92,7 +106,6 @@ void ui_control_encoder_rotary_cb(lv_event_t* e)
 					else if (temp > 100) temp = 100;
 					lv_label_set_text_fmt(ui_control.programmed_temperature, "%d˚C", temp);
 					systemconfig.pcnt.programmed_temperature = temp;
-					save_configuration();
 				}
 				break;
 			case 1:
@@ -182,7 +195,7 @@ void ui_control_init(void)
 	lv_obj_set_pos(obj, 150, y);
 	
 	y += step;
-	obj = ui_helpers_create_button(ui_control_screen, systemconfig.pcnt.enabled == 1? "ON": "OFF", 100, 40, 5, &lv_font_montserrat_14, NULL, NULL);
+	obj = ui_helpers_create_button(ui_control_screen, systemconfig.pcnt.enabled == 1? "ON": "OFF", 100, 40, 5, &lv_font_montserrat_14, ui_control_click_cb, NULL);
 	ui_helpers_button_color(obj, systemconfig.pcnt.enabled == 1? 0x00ff00: 0xff0000, UI_FOREGROUND_COLOR, 0);
 	lv_obj_align(obj, LV_ALIGN_BOTTOM_MID, 0, -20);
 	ui_control.enabled = obj;

@@ -106,7 +106,6 @@ void ui_settings_update_value(UI_SETTINGS_ITEM* ui_item, int direction) {
 void ui_settings_encoder_rotary_cb(lv_event_t* e)
 {
 	lv_obj_t * obj = lv_event_get_target_obj(e);
-	lv_event_code_t code = lv_event_get_code(e);
 	uint32_t * key = (uint32_t*)lv_event_get_param(e);
 	uint32_t key_code = *key;
 	int direction = (key_code == LV_KEY_RIGHT) ? 1 : -1;
@@ -121,7 +120,7 @@ void ui_settings_encoder_rotary_cb(lv_event_t* e)
 		}
 		ui_settings_prev_time = ui_settings_current_time;
 		
-		if (ui_settings_click_count > 2) {
+		if (ui_settings_click_count > 1) {
 			save_configuration();
 			ui_show_messagebox(MESSAGEBOX_INFO, "Save successfully.", 1000);
 			ui_settings_click_count = 0;
@@ -194,7 +193,6 @@ void ui_settings_init(void)
 	ui_settings.title = obj;
 	
 	uint16_t x = 0, y = 40, step = 45;
-	uint8_t size = sizeof(ui_settings_data) / sizeof(UI_SETTINGS_DATA_ITEM);
 	lv_obj_t* container = ui_helpers_create_panel(ui_settings_screen, 0x00000, false);
 	lv_obj_set_size(container, lv_obj_get_width(ui_settings_screen) - 20, lv_obj_get_height(ui_settings_screen) - 90);
 	lv_obj_set_pos(container, 10, 60);
@@ -207,8 +205,6 @@ void ui_settings_init(void)
 
 	lv_obj_t* panel;
 	y = 0;
-	char buf[64];
-	int xx[UI_SETTINGS_ITEM_SIZE] = {20, 5, 20};
 	int ww[UI_SETTINGS_ITEM_SIZE] = {185, 210, 185};
 	for (uint8_t i = 0; i < UI_SETTINGS_ITEM_SIZE; i++) {
 		UI_SETTINGS_ITEM *ui_item = &ui_settings_ui_items[i];
