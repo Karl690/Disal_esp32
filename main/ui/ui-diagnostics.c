@@ -1,21 +1,56 @@
 #include "ui.h"
 #include "ui-diagnostics.h"
+#include "pcnt/pcnt.h"
 #include "RevisionHistory.h"
 
 lv_obj_t* ui_diag_screen;
 UI_DIAG ui_diag;
 UI_DIAG_DATA_ITEM ui_diag_data[] = {
-	{"Value 1", &systemconfig.pcnt.temp_scale, VALUE_TYPE_FLOAT},
-	{"VAT 2", &systemconfig.pcnt.battery_scale, VALUE_TYPE_FLOAT},
-	{"ABC 1", &systemconfig.pcnt.duty_scale, VALUE_TYPE_FLOAT},
-	{"ABC 2", &systemconfig.pcnt.duty_scale, VALUE_TYPE_INT},
-	{"ABC 3", &systemconfig.pcnt.duty_scale, VALUE_TYPE_FLOAT},
-	{"ABC 3", &systemconfig.pcnt.duty_scale, VALUE_TYPE_BOOL},
+	{"CNT#1", &pcnt_info.count01, VALUE_TYPE_INT},
+	{"CNT#1", &pcnt_info.count02, VALUE_TYPE_INT},
+	{"TEMP", &pcnt_info.temperature, VALUE_TYPE_FLOAT},
+	{"freq", &pcnt_info.freq, VALUE_TYPE_INT},
+	{"Duty", &pcnt_info.duty, VALUE_TYPE_FLOAT},
+	{"Rtd_volt", &pcnt_info.rtd_volt, VALUE_TYPE_BOOL},
+	{"Bat_volt", &pcnt_info.bat_volt, VALUE_TYPE_BOOL},
 };
 #define UI_DIAG_ITEM_SIZE 3
 UI_DIAG_ITEM ui_diag_ui_items[UI_DIAG_ITEM_SIZE];
 const uint8_t ui_diag_data_size = sizeof(ui_diag_data) / sizeof(UI_DIAG_DATA_ITEM);
 ///////////////////// SCREENS ////////////////////
+
+void ui_diag_timer_cb(lv_timer_t * timer)
+{
+	if (!lv_obj_is_visible(ui_diag_screen)) return;
+	for (int i = 0, x = ui_diag.start_index; i < UI_DIAG_ITEM_SIZE; i ++, x ++) {
+		UI_DIAG_ITEM* item = &ui_diag_ui_items[i];
+		if (x >= ui_diag_data_size) {
+			item->data_item = NULL;
+			lv_label_set_text(item->title, "");
+			lv_label_set_text(item->value, "");
+		} else {
+			item->data_item = &ui_diag_data[x];
+			lv_label_set_text(item->title, item->data_item->title);
+			switch (item->data_item->type)
+			{
+			case VALUE_TYPE_INT:
+				lv_label_set_text_fmt(item->value, "%d", *(int*)item->data_item->value_ptr);
+				break;
+			case VALUE_TYPE_FLOAT:
+				sprintf(ui_temp_buffer, "%.2f", *(float*)item->data_item->value_ptr);
+				lv_label_set_text(item->value, ui_temp_buffer);
+				break;
+			case VALUE_TYPE_BOOL:
+				lv_label_set_text_fmt(item->value, "%s", *(bool*)item->data_item->value_ptr == 1? "ON": "OFF");
+				break;
+			default:
+				lv_label_set_text_fmt(item->value, "%s", item->data_item->value_ptr);
+				break;
+			}
+		}
+	}
+}
+
 
 void ui_diag_update_focus_items() {
 	for (int i = 0, x = ui_diag.start_index; i < UI_DIAG_ITEM_SIZE; i ++, x ++) {
@@ -222,4 +257,5 @@ void ui_diag_init(void)
 	}
 
 	ui_diag_update_focus_items();
+	lv_timer_create(ui_diag_timer_cb, 1000, NULL);
 }

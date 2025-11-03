@@ -18,7 +18,8 @@ void ui_control_timer_cb(lv_timer_t * timer)
 	{
 		lv_label_set_text_fmt(ui_control.v_bat, "%dV", pcnt_info.bat_volt);
 		lv_label_set_text_fmt(ui_control.actual_temperature, "%d˚C", pcnt_info.temperature);
-		lv_label_set_text_fmt(ui_control.duty, "%d%%", pcnt_info.duty);
+		sprintf(ui_temp_buffer, "%.2f", pcnt_info.duty);
+		lv_label_set_text(ui_control.duty, ui_temp_buffer);
 	}
 }
 
@@ -75,7 +76,6 @@ void ui_control_encoder_rotary_cb(lv_event_t* e)
 			ui_control.select_index = ui_control.focus_index;		
 			lv_obj_set_style_text_color(ui_control.focus, lv_color_hex(UI_ITEM_SELECT_FG_COLOR), LV_PART_MAIN);
 		}
-		return;
 	} else { // rotary event
 		tone_play(direction == 1? 2000: 3000, 10);
 		if (ui_control.select_index == -1) {
@@ -187,8 +187,7 @@ void ui_control_init(void)
 	obj = ui_helpers_create_label(ui_control_screen, "0%", &mono_regular_24);
 	ui_control.duty = obj;
 	lv_obj_set_pos(obj, 150, y);
-	lv_timer_create(ui_control_timer_cb, 1000, NULL);
-
+	
 	y += step;
 	obj = ui_helpers_create_label(ui_control_screen, "V BAT:", &lv_font_montserrat_14);
 	lv_obj_set_style_text_color(obj, lv_color_hex(UI_LABEL_COLOR), LV_PART_MAIN);

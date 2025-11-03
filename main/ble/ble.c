@@ -1,13 +1,10 @@
 #include "main.h"
 #include "ble.h"
-#include "../ui/ui-bluetooth.h"
-
 
 BleRemoteDevice ble_client_remote_device[BLE_CLIENT_MAX_CONNECT_NUM];
 uint8_t ble_rx_buffer[RX_BUF_SIZE];
 uint8_t ble_tx_buffer[TX_BUF_SIZE];
 
-BleDevice bleDevice;
 uint8_t connection_count = 0;
 uint8_t ble_client_scaned_device_num = 0;
 esp_ble_adv_params_t spp_adv_params = {
@@ -54,7 +51,7 @@ static void gap_event_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param
 		//esp_ble_gap_set_scan_params(&ble_scan_params); // reset parameters
 		
 		ble_scan_status = BLE_CLIENT_SCAN_READY;
-		ui_ble_changed_ble_status(ble_scan_status);
+		// ui_ble_changed_ble_status(ble_scan_status);
         //the unit of the duration is second
         //uint32_t duration = 0xFFFF;
 		//ESP_LOGI(BLE_TAG, "Enable Ble Scan:during time %04" PRIx32 " minutes.", duration);
@@ -72,12 +69,11 @@ static void gap_event_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param
 		//memset(ble_client_remote_device, 0, sizeof(BleRemoteDevice) * BLE_CLIENT_MAX_CONNECT_NUM);
 		ble_scan_status = BLE_CLIENT_SCANNING;
 		ESP_LOGI(BLE_TAG, "Scan start successed");
-		ui_ble_changed_ble_status(ble_scan_status);
+		// ui_ble_changed_ble_status(ble_scan_status);
         break;
     case ESP_GAP_BLE_SCAN_STOP_COMPLETE_EVT:
 		ESP_LOGI(BLE_TAG, "Scan stop successed");
 		ble_scan_status = BLE_CLIENT_SCAN_READY;
-		ui_ble_changed_ble_status(ble_scan_status);
         break;
     case ESP_GAP_BLE_SCAN_RESULT_EVT: {
         esp_ble_gap_cb_param_t *scan_result = (esp_ble_gap_cb_param_t *)param;
@@ -130,7 +126,7 @@ uint8_t ble_add_scan_device(esp_ble_gap_cb_param_t* scan_result) {
 	ble_client_remote_device[ble_client_scaned_device_num].is_scaned = 1;
 	ble_client_remote_device[ble_client_scaned_device_num].total_sent = 0;
 	ble_client_remote_device[ble_client_scaned_device_num].total_received = 0;
-	ui_ble_add_device(&ble_client_remote_device[ble_client_scaned_device_num]);	
+	// ui_ble_add_device(&ble_client_remote_device[ble_client_scaned_device_num]);	
 	ble_client_scaned_device_num++;
 	return 1;
 }
@@ -141,19 +137,32 @@ void ble_init()
 	ESP_ERROR_CHECK(esp_bt_controller_mem_release(ESP_BT_MODE_CLASSIC_BT));
 	esp_bt_controller_init(&bt_cfg);
 	esp_bt_controller_enable(ESP_BT_MODE_BLE);
-	
-	esp_bluedroid_init();	
-	
+	esp_bluedroid_init();
+	ble_update_name(systemconfig.bluetooth.address_number);
 	ble_enable();
+}
+
+void ble_deinit(void) {
+    // Stop advertising
+    ESP_ERROR_CHECK(esp_ble_gap_stop_advertising());
+
+    // Disable and de-initialize Bluedroid
+    ESP_ERROR_CHECK(esp_bluedroid_disable());
+    ESP_ERROR_CHECK(esp_bluedroid_deinit());
+
+    // Disable and de-initialize Bluetooth controller
+    ESP_ERROR_CHECK(esp_bt_controller_disable());
+    ESP_ERROR_CHECK(esp_bt_controller_deinit());
 }
 
 void ble_update_base_address()
 {
 	char sz[4] = { 0 };
-	sprintf(sz, "%03d", (int)systemconfig.server_base_address);
+	//sprintf(sz, "%03d", (int)systemconfig.server_base_address);
+	sprintf(sz, "%03d", (int)0);
 	memcpy((char*)(raw_scan_rsp_data + 11), sz, 3);
 	esp_ble_gap_config_scan_rsp_data_raw(raw_scan_rsp_data, BLE_RAW_RSP_DATA_SIZE);
-	ui_ble_set_servername((char*)(raw_scan_rsp_data + 2)); //it should start from 2 byte.
+	//ui_ble_set_servername((char*)(raw_scan_rsp_data + 2)); //it should start from 2 byte.
 }
 
 void ble_update_name(int address)
@@ -161,11 +170,11 @@ void ble_update_name(int address)
 	// set the device name with channel index
 	char a = address / 10;
 	char b = address % 10;
-	raw_scan_rsp_data[16] = '0' + a; //the second place from last point
-	raw_scan_rsp_data[17] = '0' + b; // the last point
+	raw_scan_rsp_data[15] = '0' + a; //the second place from last point
+	raw_scan_rsp_data[16] = '0' + b; // the last point
 	esp_ble_gap_config_scan_rsp_data_raw(raw_scan_rsp_data, BLE_RAW_RSP_DATA_SIZE);
 	
-	ui_ble_set_servername((char*)(raw_scan_rsp_data + 2)); //it should start from 2 byte.
+	// ui_ble_set_servername((char*)(raw_scan_rsp_data + 2)); //it should start from 2 byte.
 }
 
 char* ble_get_name()
@@ -185,11 +194,9 @@ uint8_t ble_enable()
 	ble_scan_status	= BLE_CLIENT_SCAN_NOT_READY;
 	esp_ble_gap_register_callback(gap_event_handler);
 	esp_ble_gap_set_scan_params(&ble_scan_params);
-	
-	ble_server_enable();
-	ble_client_enable();
-	
-	communication_buffers_ble_init(BLE_PORT_ID, &bleDevice, ble_rx_buffer, ble_tx_buffer);
+	if (systemconfig.bluetooth.server_enabled){
+		ble_server_enable();
+	}
 	
 	ble_scan_status = BLE_CLIENT_SCAN_READY;
 	systemconfig.bluetooth.status = 1;
@@ -238,7 +245,6 @@ BleRemoteDevice* ble_client_get_device_by_conn_id(uint16_t conn_id) {
 	return NULL;
 }
 
-	
 
 BleRemoteDevice* ble_get_device(uint8_t id)
 {

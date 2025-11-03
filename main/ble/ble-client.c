@@ -1,8 +1,6 @@
 #include "main.h"
 #include "ble.h"
-#include "../ui/ui-bluetooth.h"
-#include "L_Core/ui/ui-comm.h"
-#include "L_Core/ui/ui-simple.h"
+#include <queue.h>
 struct gattc_profile_inst {
 	esp_gattc_cb_t gattc_cb;
 	uint16_t gattc_if;
@@ -138,7 +136,6 @@ static void gattc_profile_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_
         if (dev->get_server){
 	        is_client_connect = true;
 	        ble_client_paired_device = dev;
-	        run_mode = RUN_BLE_CLIENT;
             uint16_t count = 0;
             esp_gatt_status_t status = esp_ble_gattc_get_attr_count( gattc_if,
                                                                      p_data->search_cmpl.conn_id,
@@ -225,7 +222,6 @@ static void gattc_profile_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_
         dev->is_connected = 0;
         dev->get_server = 0;
 	    is_client_connect = false;
-	    run_mode = RUN_NORMAL;
 	    ble_client_paired_device = NULL;
         ESP_LOGI(BLE_TAG, "ESP_GATTC_DISCONNECT_EVT, reason = %d", p_data->disconnect.reason);
         ui_ble_set_device_status(dev);
@@ -288,9 +284,6 @@ void ble_client_read_data(uint8_t* data, uint16_t len)
 	memcpy(ble_client_paired_device->receive_buffer, data, len);
 	ble_client_paired_device->total_received += len;
 	ui_ble_set_received_data(ble_client_paired_device);
-    if (ui_simple_is_ble && ui_simple_is_rcv) {
-        ui_simple_add_log((char*)data, UI_RECEIVE_COLOR);
-    }
 }
 
 void ble_client_write_data(uint8_t* data, uint16_t len)
@@ -307,8 +300,4 @@ void ble_client_write_data(uint8_t* data, uint16_t len)
 		data,
 		ESP_GATT_WRITE_TYPE_RSP,
 		ESP_GATT_AUTH_REQ_NONE);
-
-    if (ui_simple_is_ble && ui_simple_is_xmt) {
-        ui_simple_add_log((char*)data, UI_SEND_COLOR);
-    }
 }

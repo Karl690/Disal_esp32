@@ -1,10 +1,6 @@
 #include "main.h"
 #include "ble.h"
 #include "driver/uart.h"
-#include "L_Core/ui/ui.h"
-#include "L_Core/ui/ui-bluetooth.h"
-#include "L_Core/ui/ui-simple.h"
-#include "K_Core/communication/communication.h"
 #define ESP_SERVER_PROFILE_APP_IDX         0
 #define SAMPLE_DEVICE_NAME          "ESP32_S3_SC"    //The Device Name Characteristics in GAP
 #define SPP_SVC_INST_ID	            0
@@ -30,7 +26,7 @@ static const uint8_t spp_adv_data[] = {
 uint8_t raw_scan_rsp_data[BLE_RAW_RSP_DATA_SIZE] = {
 	//SC01_MEG_##
         16, 0x09,   //12 : length
-		'S','C','0','1','_','M', 'E', 'G', '_', '0','0','0','_', '0', '0'
+		'D','I','S','A','L','-','E', 'S', 'P', '0', '0','0','-', '0', '0'
 };
 
 static uint16_t spp_server_mtu_size = 23;
@@ -370,7 +366,6 @@ static void gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_
 	case ESP_GATTS_CONNECT_EVT:
 		spp_server_conn_id = p_data->connect.conn_id;
 		spp_gatts_if = gatts_if;
-		run_mode = RUN_BLE_SERVER;
 		is_server_connected = 1;
 		ble_server_total_received = 0;
 		ble_server_total_sent = 0;
@@ -379,7 +374,6 @@ static void gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_
 		ble_server_pairing_countdown = 10; // if the client does not send data util this value become 0, close the pairing. 
 		break;
 	case ESP_GATTS_DISCONNECT_EVT:
-		run_mode = RUN_NORMAL;
 		is_server_connected = 0;
 		enable_data_ntf = false;
 		esp_ble_gap_start_advertising(&spp_adv_params);		
@@ -446,6 +440,7 @@ static void gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_
 //enabled bluetooth device
 uint8_t ble_server_enable()
 {	
+	esp_bluedroid_enable();
 	esp_ble_gatts_register_callback(gatts_event_handler);
 	esp_ble_gatts_app_register(BLE_SERVER_APP_ID);
 	ble_update_base_address();
@@ -457,7 +452,7 @@ uint8_t ble_server_enable()
 //disable bluetooth device
 void ble_server_disable()
 {
-	//esp_bluedroid_disable();
+	esp_bluedroid_disable();
 	esp_ble_gatts_app_unregister(BLE_SERVER_APP_ID);
 	systemconfig.bluetooth.server_enabled = 0;
 }
@@ -475,9 +470,6 @@ uint8_t ble_server_send_data(uint8_t* data, uint16_t size)
 	if (!is_server_connected) return 0;
 	ble_server_send_blink_count = 5;	
 	ble_server_total_sent += size;
-	if (ui_simple_is_ble && ui_simple_is_xmt) {
-		ui_simple_add_log((char*) data, UI_SEND_COLOR);
-	}
 	esp_err_t err = esp_ble_gatts_send_indicate(spp_gatts_if, spp_server_conn_id, spp_handle_table[SPP_IDX_SPP_DATA_NTY_VAL], size, data, false);	
 	if (err != ESP_OK) return 0;
 	return 1;
@@ -487,10 +479,6 @@ void ble_server_received_data(uint8_t* data, uint16_t size)
 {
 	ble_server_receive_blink_count = 5;
 	ble_server_total_received += size;
-	communication_add_buffer_to_ble_buffer(&bleDevice.RxBuffer, data, size);	
-	if (ui_simple_is_ble && ui_simple_is_rcv) {
-		ui_simple_add_log((char*) data, UI_RECEIVE_COLOR);
-	}
-	
+	ESP_LOGI(BLE_TAG, "BLE RECEIVED %d bytes", size);
 }
 //////////////////////////////////////////////////////////////////////////////

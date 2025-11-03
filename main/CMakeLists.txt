@@ -3,6 +3,8 @@ idf_component_register(
                 	main.c
 					lcd/lcd.c
                 	wifi/wifi.c
+					ble/ble.c
+					ble/ble-server.c
 					gpio/gpio.c
 					pcnt/pcnt.c
 					storage/partition.c
@@ -18,6 +20,8 @@ idf_component_register(
 					ui/ui-control.c
 					ui/ui-settings.c
 					ui/ui-diagnostics.c
+					ui/ui-wifi.c
+					ui/ui-ble.c
 					ui/images/hyrel_logo.c
 					ui/font/en_12.c
                 	ui/font/en_16.c

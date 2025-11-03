@@ -1,7 +1,5 @@
 #pragma once
 
-#pragma once
-
 #include "esp_bt.h"
 
 #include "esp_gap_ble_api.h"
@@ -10,7 +8,6 @@
 #include "esp_bt_defs.h"
 #include "esp_gatt_common_api.h"
 #include "esp_bt_main.h"
-#include "K_Core/serial/serial.h"
 
 #define BLE_TAG "HYREL_BLE"
 #define BLE_PORT_ID				0x80
@@ -104,8 +101,6 @@ typedef struct _tagBLEDevice {
 extern uint8_t raw_scan_rsp_data[];
 extern uint8_t ble_rx_buffer[RX_BUF_SIZE];
 extern uint8_t ble_tx_buffer[TX_BUF_SIZE];
-extern RUN_MODE run_mode;
-extern BleDevice bleDevice;
 extern ble_server_status_t ble_server_status;
 extern uint8_t ble_client_scaned_device_num;
 extern BleRemoteDevice ble_client_remote_device[BLE_CLIENT_MAX_CONNECT_NUM];
@@ -129,6 +124,7 @@ extern esp_ble_gap_cb_param_t ble_client_scan_rst;
 
 
 void ble_init();
+void ble_deinit(void);
 
 uint8_t ble_enable();
 void ble_disable();

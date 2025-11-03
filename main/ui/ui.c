@@ -5,6 +5,8 @@
 #include "ui-control.h"
 #include "ui-settings.h"
 #include "ui-diagnostics.h"
+#include "ui-ble.h"
+#include "ui-wifi.h"
 #include "bsp/m5dial.h"
 
 ui_msg_t ui_msgbox;
@@ -45,6 +47,12 @@ void ui_transform_screen(SCREEN_TYPE screen, lv_scr_load_anim_t anim, uint16_t t
 		break;
 	case SCREEN_DIAGNOSTICS:
 		ui_active_screen = ui_diag_screen;
+		break;
+	case SCREEN_WIFI:
+		ui_active_screen = ui_wifi_screen;
+		break;
+	case SCREEN_BLE:
+		ui_active_screen = ui_ble_screen;
 		break;
 	default:
 		return;
@@ -181,6 +189,8 @@ void ui_init( void )
 	ui_control_init();
 	ui_settings_init();
 	ui_diag_init();
+	ui_wifi_init();
+	ui_ble_init();
     ui_create_messagebox();
 	// ui_create_top_bar();
 	

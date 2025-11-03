@@ -5,12 +5,12 @@ lv_obj_t* ui_splash_screen;
 
 LV_IMG_DECLARE(img_hyrel_logo);
 
-uint8_t ui_splash_wait_countdown = 4;
+uint8_t ui_splash_wait_countdown = 2;
 void ui_splash_timer_cb(lv_timer_t* timer)
  {
 	if (lv_obj_is_visible(ui_splash_screen)) {
 		ESP_LOGI("UI", "Splash wait %d", ui_splash_wait_countdown);
-		if (ui_splash_wait_countdown == 0) ui_transform_screen(SCREEN_CONTROL, LV_SCR_LOAD_ANIM_MOVE_BOTTOM, 300);
+		if (ui_splash_wait_countdown == 0) ui_transform_screen(SCREEN_BLE, LV_SCR_LOAD_ANIM_MOVE_BOTTOM, 300);
 
 		ui_splash_wait_countdown --;
 	}
