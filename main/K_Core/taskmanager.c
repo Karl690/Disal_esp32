@@ -1,4 +1,4 @@
-#include "task_manager.h"
+#include "taskmanager.h"
 #include "pcnt/pcnt.h"
 
 volatile uint32_t SliceCnt = 0; // current slice being processed
@@ -107,7 +107,7 @@ void taskamanger_task(void* arg)
 	
 }
 
-void task_manager_init()
+void taskmanager_init()
 {
 	esp_timer_create_args_t systickTimerArgs = {
 		.callback = func_SystickCallback,

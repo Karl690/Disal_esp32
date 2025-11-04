@@ -9,7 +9,7 @@
 #include "wifi/wifi.h"
 #include "ble/ble.h"
 #include "pcnt/pcnt.h"
-#include "task_manager/task_manager.h"
+#include "taskmanager.h"
 #include "iot_button.h"
 #include "button_gpio.h"
 #include "utils/utils.h"
@@ -38,10 +38,9 @@ extern "C" void app_main(void)
 	bsp_display_unlock();
 	wifi_init();
 	ble_init();
-	pcnt_init();
 	ledc_init();
 	tone_init();
-	task_manager_init();
+	
 	IsInitialized = true;
 }
 

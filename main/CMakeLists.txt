@@ -1,40 +1,42 @@
 idf_component_register(
                 SRCS
                 	main.c
-					lcd/lcd.c
-                	wifi/wifi.c
-					ble/ble.c
-					ble/ble-server.c
-					gpio/gpio.c
-					pcnt/pcnt.c
-					storage/partition.c
-                	storage/nvs.c
-					task_manager/task_manager.c
-					utils/utils.c
-					tone/tone.c
-					ledc/ledc.c
-                	ui/ui.c
-					ui/ui-helpers.c
-                    ui/ui-splash.c
-					ui/ui-home.c
-					ui/ui-control.c
-					ui/ui-settings.c
-					ui/ui-diagnostics.c
-					ui/ui-wifi.c
-					ui/ui-ble.c
-					ui/images/hyrel_logo.c
-					ui/font/en_12.c
-                	ui/font/en_16.c
-                	ui/font/en_bold_16.c
-                	ui/font/en_bold_20.c
-                	ui/font/en_bold_24.c
-                	ui/font/en_bold_30.c
-                	ui/font/mono_bold_16.c
-                	ui/font/mono_bold_24.c
-                	ui/font/mono_bold_28.c
-                	ui/font/mono_bold_32.c
-                	ui/font/mono_regular_24.c                	
-                INCLUDE_DIRS "."
+					K_Core/gpio/gpio.c
+					K_Core/pcnt/pcnt.c
+					K_Core/taskmanager.c
+					K_Core/utils/utils.c
+					L_Core/lcd/lcd.c
+                	L_Core/wifi/wifi.c
+					L_Core/ble/ble.c
+					L_Core/ble/ble-server.c
+					L_Core/storage/partition.c
+                	L_Core/storage/nvs.c
+					L_Core/tone/tone.c
+					L_Core/ledc/ledc.c
+                	L_Core/ui/ui.c
+					L_Core/ui/ui-helpers.c
+                    L_Core/ui/ui-splash.c
+					L_Core/ui/ui-home.c
+					L_Core/ui/ui-control.c
+					L_Core/ui/ui-settings.c
+					L_Core/ui/ui-diagnostics.c
+					L_Core/ui/ui-wifi.c
+					L_Core/ui/ui-ble.c
+					L_Core/ui/images/hyrel_logo.c
+					L_Core/ui/font/en_12.c
+                	L_Core/ui/font/en_16.c
+                	L_Core/ui/font/en_bold_16.c
+                	L_Core/ui/font/en_bold_20.c
+                	L_Core/ui/font/en_bold_24.c
+                	L_Core/ui/font/en_bold_30.c
+                	L_Core/ui/font/mono_bold_16.c
+                	L_Core/ui/font/mono_bold_24.c
+                	L_Core/ui/font/mono_bold_28.c
+                	L_Core/ui/font/mono_bold_32.c
+                	L_Core/ui/font/mono_regular_24.c                	
+                INCLUDE_DIRS .
+					K_Core
+					L_Core
                 REQUIRES
 					nvs_flash
                 	lvgl

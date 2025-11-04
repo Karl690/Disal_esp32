@@ -6,7 +6,7 @@
         "font.h": "c",
         "lvgl.h": "c",
         "inttypes.h": "c",
-        "task_manager.h": "c",
+        "taskmanager.h": "c",
         "future": "cpp",
         "system_error": "cpp",
         "regex": "cpp",

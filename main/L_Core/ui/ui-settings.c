@@ -1,6 +1,6 @@
 #include "ui.h"
 #include "ui-settings.h"
-#include "task_manager/task_manager.h"
+#include "taskmanager.h"
 lv_obj_t* ui_settings_screen;
 UI_SETTINGS ui_settings;
 UI_SETTINGS_DATA_ITEM ui_settings_data[] = {
