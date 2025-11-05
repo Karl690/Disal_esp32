@@ -206,7 +206,7 @@ esp_err_t bsp_spiffs_unmount(void);
 
 
 #if (BSP_CONFIG_NO_GRAPHIC_LIB == 0)
-#define BSP_LCD_DRAW_BUFF_SIZE     (BSP_LCD_H_RES * 50)
+#define BSP_LCD_DRAW_BUFF_SIZE     (BSP_LCD_H_RES * 20)
 #define BSP_LCD_DRAW_BUFF_DOUBLE   (1)
 
 /**
