@@ -1,5 +1,5 @@
 {
-    "idf.portWin": "COM4",
+    "idf.portWin": "COM3",
     "idf.flashType": "UART",
     "files.associations": {
         "ui.h": "c",
@@ -21,7 +21,7 @@
         "ui-control.h": "c",
         "numbers": "cpp"
     },
-    "idf.espIdfPathWin": "C:\\Users\\falcon\\esp\\v5.4.2\\esp-idf",
+    "idf.espIdfPathWin": "C:\\Users\\falcon\\esp\\v5.4.3\\esp-idf",
     "idf.toolsPathWin": "C:\\Users\\falcon\\.espressif",
     "idf.pythonInstallPath": "C:\\Users\\falcon\\.espressif\\tools\\idf-python\\3.11.2\\python.exe"
 }

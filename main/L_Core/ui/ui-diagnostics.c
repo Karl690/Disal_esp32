@@ -1,6 +1,8 @@
 #include "ui.h"
 #include "ui-diagnostics.h"
 #include "pcnt/pcnt.h"
+#include "K_Core/taskmanager.h"
+#include "K_Core/display/DisplayList.h"
 #include "RevisionHistory.h"
 
 lv_obj_t* ui_diag_screen;
@@ -16,7 +18,7 @@ UI_DIAG_DATA_ITEM ui_diag_data[] = {
 };
 #define UI_DIAG_ITEM_SIZE 3
 UI_DIAG_ITEM ui_diag_ui_items[UI_DIAG_ITEM_SIZE];
-const uint8_t ui_diag_data_size = sizeof(ui_diag_data) / sizeof(UI_DIAG_DATA_ITEM);
+const uint8_t ui_diag_data_size = LcdDiagVarsSize;
 ///////////////////// SCREENS ////////////////////
 
 void ui_diag_timer_cb(lv_timer_t * timer)
@@ -29,22 +31,27 @@ void ui_diag_timer_cb(lv_timer_t * timer)
 			lv_label_set_text(item->title, "");
 			lv_label_set_text(item->value, "");
 		} else {
-			item->data_item = &ui_diag_data[x];
-			lv_label_set_text(item->title, item->data_item->title);
-			switch (item->data_item->type)
+			DisplayVariableInfo* info = &LcdDiagVarsTable[x];
+			item->data_item = info;
+			lv_label_set_text(item->title, info->Label);
+			// if (strcmp(info->Label, "HB") == 0) {
+			// 	ESP_LOGI(TAG, "HeartBeat: %d %d", *(int*)info->VariablePointer, HeartBeat);
+			// }
+
+			switch (info->FuncType)
 			{
-			case VALUE_TYPE_INT:
-				lv_label_set_text_fmt(item->value, "%d", *(int*)item->data_item->value_ptr);
+			case FUNC_INT32:
+				lv_label_set_text_fmt(item->value, "%d", *(int*)info->VariablePointer);
 				break;
-			case VALUE_TYPE_FLOAT:
-				sprintf(ui_temp_buffer, "%.2f", *(float*)item->data_item->value_ptr);
+			case FUNC_FLOAT:
+				sprintf(ui_temp_buffer, "%.2f", *(float*)info->VariablePointer);
 				lv_label_set_text(item->value, ui_temp_buffer);
 				break;
-			case VALUE_TYPE_BOOL:
-				lv_label_set_text_fmt(item->value, "%s", *(bool*)item->data_item->value_ptr == 1? "ON": "OFF");
+			case FUNC_BOOLEAN:
+				lv_label_set_text_fmt(item->value, "%s", *(bool*)info->VariablePointer == 1? "ON": "OFF");
 				break;
 			default:
-				lv_label_set_text_fmt(item->value, "%s", item->data_item->value_ptr);
+				lv_label_set_text_fmt(item->value, "%s", info->VariablePointer);
 				break;
 			}
 		}
@@ -60,22 +67,23 @@ void ui_diag_update_focus_items() {
 			lv_label_set_text(item->title, "");
 			lv_label_set_text(item->value, "");
 		} else {
-			item->data_item = &ui_diag_data[x];
-			lv_label_set_text(item->title, item->data_item->title);
-			switch (item->data_item->type)
+			DisplayVariableInfo* info = &LcdDiagVarsTable[x];
+			item->data_item = info;
+			lv_label_set_text(item->title, info->Label);
+			switch (info->FuncType)
 			{
-			case VALUE_TYPE_INT:
-				lv_label_set_text_fmt(item->value, "%d", *(int*)item->data_item->value_ptr);
+			case FUNC_INT32:
+				lv_label_set_text_fmt(item->value, "%d", *(int*)info->VariablePointer);
 				break;
-			case VALUE_TYPE_FLOAT:
-				sprintf(ui_temp_buffer, "%.2f", *(float*)item->data_item->value_ptr);
+			case FUNC_FLOAT:
+				sprintf(ui_temp_buffer, "%.2f", *(float*)info->VariablePointer);
 				lv_label_set_text(item->value, ui_temp_buffer);
 				break;
-			case VALUE_TYPE_BOOL:
-				lv_label_set_text_fmt(item->value, "%s", *(bool*)item->data_item->value_ptr == 1? "ON": "OFF");
+			case FUNC_BOOLEAN:
+				lv_label_set_text_fmt(item->value, "%s", *(bool*)info->VariablePointer == 1? "ON": "OFF");
 				break;
 			default:
-				lv_label_set_text_fmt(item->value, "%s", item->data_item->value_ptr);
+				lv_label_set_text_fmt(item->value, "%s", info->VariablePointer);
 				break;
 			}
 		}
@@ -112,24 +120,24 @@ void ui_diag_update_item(UI_DIAG_ITEM* ui_item, uint8_t status) {
 }
 
 void ui_diag_update_value(UI_DIAG_ITEM* ui_item, int direction) {
-	UI_DIAG_DATA_ITEM *item = &ui_diag_data[ui_diag.focus_index];
+	DisplayVariableInfo* info = &LcdDiagVarsTable[ui_diag.focus_index];
 	int a;
 	float b;
 	bool c;
-	switch (item->type)
+	switch (info->FuncType)
 	{
-	case VALUE_TYPE_INT:
-		*(int*)item->value_ptr += direction;
-		lv_label_set_text_fmt(ui_item->value, "%d", *(int*)item->value_ptr);
+	case FUNC_INT32:
+		*(int*)info->VariablePointer += direction;
+		lv_label_set_text_fmt(ui_item->value, "%d", *(int*)info->VariablePointer);
 		break;
 	case VALUE_TYPE_FLOAT:
-		*(float*)item->value_ptr += direction;
-		sprintf(ui_temp_buffer, "%.2f", *(float*)(item->value_ptr));
+		*(float*)info->VariablePointer += direction;
+		sprintf(ui_temp_buffer, "%.2f", *(float*)(info->VariablePointer));
 		lv_label_set_text(ui_item->value, ui_temp_buffer);
 		break;
 	case VALUE_TYPE_BOOL:
-		*(bool*)item->value_ptr = *(bool*)(item->value_ptr)? false: true;
-		lv_label_set_text(ui_item->value, *(bool*)(item->value_ptr) ? "ON": "OFF");
+		*(bool*)info->VariablePointer = *(bool*)(info->VariablePointer)? false: true;
+		lv_label_set_text(ui_item->value, *(bool*)(info->VariablePointer) ? "ON": "OFF");
 		break;
 	default:
 		break;

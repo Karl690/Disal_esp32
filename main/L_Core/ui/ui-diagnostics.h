@@ -25,7 +25,7 @@ typedef struct {
     lv_obj_t* panel;
     lv_obj_t* title;
     lv_obj_t* value;
-    UI_DIAG_DATA_ITEM* data_item;
+    void* data_item;
 } UI_DIAG_ITEM;
 
 extern lv_obj_t *ui_diag_screen;

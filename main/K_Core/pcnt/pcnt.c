@@ -108,7 +108,6 @@ void pcnt_get_value() {
         pcnt_info.duty = 0;
         gpio_set_level((gpio_num_t)systemconfig.pcnt.ctrl_pin, 0); // turn off
     }
-    ESP_LOGI(TAG, "DUTY: %f, TEMP: %d", pcnt_info.duty, pcnt_info.temperature);
     ESP_ERROR_CHECK(pcnt_counter_clear(PCNT_UNIT_0));
     ESP_ERROR_CHECK(pcnt_counter_clear(PCNT_UNIT_1));
 }

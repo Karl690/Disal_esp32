@@ -5,6 +5,12 @@ idf_component_register(
 					K_Core/pcnt/pcnt.c
 					K_Core/taskmanager.c
 					K_Core/utils/utils.c
+					K_Core/serial/serial.c
+					K_Core/adc/adc-table.c
+					K_Core/adc/adc.c
+					K_Core/execution/cmdprocessor.c
+					K_core/display/DisplayList.c
+					K_core/K_core.c
 					L_Core/lcd/lcd.c
                 	L_Core/wifi/wifi.c
 					L_Core/ble/ble.c
@@ -52,3 +58,4 @@ idf_component_register(
                 	sdmmc)
 component_compile_options(-fexceptions -x c++ -O0 -Wno-shift-negative-value -Wno-missing-field-initializers -Wno-write-strings -Wno-error=format)
 set_property(TARGET ${COMPONENT_TARGET} PROPERTY CXX_STANDARD 17)
+

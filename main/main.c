@@ -13,6 +13,7 @@
 #include "iot_button.h"
 #include "button_gpio.h"
 #include "utils/utils.h"
+#include "K_Core/k_core.h"
 
 const char *TAG = "HYREL";
 bool IsInitialized = false;
@@ -40,7 +41,10 @@ extern "C" void app_main(void)
 	ble_init();
 	ledc_init();
 	tone_init();
-	
+
+	K_Core_Main();
+
+	ESP_LOGI(TAG, "INITIALIZED DONE: %d", CONFIG_APP_CMD_MAX_SIZE);
 	IsInitialized = true;
 }
 
