@@ -48,6 +48,7 @@ typedef struct
 	float battery_scale;
 	float rtd_scale;
 	float duty_scale;
+	uint8_t duty_test;
 } PCNT_CONFIG;
 
 typedef struct

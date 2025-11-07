@@ -6,7 +6,9 @@ UI_SETTINGS ui_settings;
 UI_SETTINGS_DATA_ITEM ui_settings_data[] = {
 	{"Temp Scale", &systemconfig.pcnt.temp_scale, VALUE_TYPE_FLOAT},
 	{"BAT Scale", &systemconfig.pcnt.battery_scale, VALUE_TYPE_FLOAT},
+	{"RTD Scale", &systemconfig.pcnt.rtd_scale, VALUE_TYPE_FLOAT},
 	{"Duty Scale", &systemconfig.pcnt.duty_scale, VALUE_TYPE_FLOAT},
+	{"Duty Test", &systemconfig.pcnt.duty_test, VALUE_TYPE_INT},
 };
 #define UI_SETTINGS_ITEM_SIZE 3
 UI_SETTINGS_ITEM ui_settings_ui_items[UI_SETTINGS_ITEM_SIZE];
@@ -123,11 +125,11 @@ void ui_settings_encoder_rotary_cb(lv_event_t* e)
 		if (ui_settings_click_count > 1) {
 			save_configuration();
 			ui_show_messagebox(MESSAGEBOX_INFO, "Save successfully.", 1000);
-			ui_settings.focus_index = ui_settings_data_size;
 			if (ui_settings.select_index != ui_settings_data_size) {
-				ui_settings_update_item(&ui_settings_ui_items[ui_settings.select_index -ui_settings.start_index], 0);	
+				ui_settings_update_item(&ui_settings_ui_items[ui_settings.focus_index -ui_settings.start_index], 0);	
 				lv_obj_set_style_text_color(ui_settings.title, lv_color_hex(UI_ITEM_NORMAL_FG_COLOR), LV_PART_MAIN);	
 			}
+			ui_settings.focus_index = ui_settings_data_size;
 			ui_settings.select_index = -1;
 			ui_settings_click_count = 0;
 			ui_settings_update_focus_items();
