@@ -1,4 +1,4 @@
-#include <driver/pcnt.h>
+#include <driver/pulse_cnt.h>
 #include <driver/gpio.h>
 #include "pcnt.h"
 
@@ -9,6 +9,11 @@ PCNT_INFO pcnt_info = {0, 0, 0, 0, 0, 0};
 #define TEMP_SCALE                      32
 #define TEMP_SCALEF                     32.0f
 #define MAX_TEMP                        0x7fff  // max positive
+
+pcnt_unit_handle_t pcnt_unit_0 = NULL;
+pcnt_unit_handle_t pcnt_unit_1 = NULL;
+
+
 AdcTableStruct const RtdTable_1K[] __attribute__((aligned(4))) =
 { // 1K RTD -- based on datasheet
 		// 20 entries; 4 bytes each; 80 bytes total
@@ -39,64 +44,69 @@ AdcTableStruct const RtdTable_1K[] __attribute__((aligned(4))) =
 float pcnt_convert_temperature(const AdcTableStruct* adcTable, float voltage);
 
 void pcnt_init(void) {
-    gpio_config_t io_conf = {
-        .pin_bit_mask = (1ULL << PCNT_INPUT_PIN_01) | (1ULL << PCNT_INPUT_PIN_02),
-        .mode = GPIO_MODE_INPUT,
-        .pull_up_en = GPIO_PULLUP_DISABLE,
-        .pull_down_en = GPIO_PULLDOWN_DISABLE,
-        .intr_type = GPIO_INTR_DISABLE
+    pcnt_unit_config_t cfg0 = { 
+        .low_limit = -32767,
+        .high_limit = 32767, 
     };
-    ESP_ERROR_CHECK(gpio_config(&io_conf));
+    cfg0.flags.accum_count = true;
+    ESP_ERROR_CHECK(pcnt_new_unit(&cfg0, &pcnt_unit_0));
 
-    gpio_config_t ctrl_conf = {
-        .pin_bit_mask = (1ULL << PCNT_CTRL_PIN),
-        .mode = GPIO_MODE_OUTPUT,
-        .pull_up_en = GPIO_PULLUP_DISABLE,
-        .pull_down_en = GPIO_PULLDOWN_DISABLE,
-        .intr_type = GPIO_INTR_DISABLE
+    pcnt_chan_config_t chan0_cfg = { 
+        .edge_gpio_num = PCNT_INPUT_PIN_01 
     };
-    esp_err_t err = gpio_config(&ctrl_conf);
-    gpio_set_level((gpio_num_t)PCNT_CTRL_PIN, 1); // turn on
+    pcnt_channel_handle_t chan0;
+    ESP_ERROR_CHECK(pcnt_new_channel(pcnt_unit_0, &chan0_cfg, &chan0));
+    ESP_ERROR_CHECK(pcnt_channel_set_edge_action(chan0, PCNT_CHANNEL_EDGE_ACTION_INCREASE, PCNT_CHANNEL_EDGE_ACTION_HOLD));
 
-    pcnt_config_t pcnt_config = {
-        .pulse_gpio_num = PCNT_INPUT_PIN_01,  // plus input pin
-        .ctrl_gpio_num = PCNT_PIN_NOT_USED,  // control pin (not used)
-        .lctrl_mode = PCNT_MODE_KEEP,      // low level control mode
-        .hctrl_mode = PCNT_MODE_KEEP,      // high level control mode
-        .pos_mode = PCNT_COUNT_INC,        //  increase count on up edge
-        .neg_mode = PCNT_COUNT_DIS,        // increase count on down edge
-        .counter_h_lim = 32767,            // max count value
-        .unit = PCNT_UNIT_0,
-        .channel = PCNT_CHANNEL_0
-    };
-
-    ESP_ERROR_CHECK(pcnt_unit_config(&pcnt_config));
-    pcnt_config.pulse_gpio_num = PCNT_INPUT_PIN_02;  // plus input pin
     
-    ESP_ERROR_CHECK(pcnt_unit_config(&pcnt_config));
+    pcnt_unit_config_t cfg1 = { 
+        .low_limit = -32767,
+        .high_limit = 32767,
+    };
+    cfg1.flags.accum_count = true;
+    ESP_ERROR_CHECK(pcnt_new_unit(&cfg1, &pcnt_unit_1));
+
+    pcnt_chan_config_t chan1_cfg = { 
+        .edge_gpio_num = PCNT_INPUT_PIN_02
+    };
+    pcnt_channel_handle_t chan1;
+    ESP_ERROR_CHECK(pcnt_new_channel(pcnt_unit_1, &chan1_cfg, &chan1));
+    ESP_ERROR_CHECK(pcnt_channel_set_edge_action(chan1, PCNT_CHANNEL_EDGE_ACTION_INCREASE, PCNT_CHANNEL_EDGE_ACTION_HOLD));
     
-    ESP_ERROR_CHECK(pcnt_counter_pause(PCNT_UNIT_0));
-    ESP_ERROR_CHECK(pcnt_counter_clear(PCNT_UNIT_0));
+    pcnt_glitch_filter_config_t filter = { .max_glitch_ns = 1000 };
+    ESP_ERROR_CHECK(pcnt_unit_set_glitch_filter(pcnt_unit_0, &filter));
+    ESP_ERROR_CHECK(pcnt_unit_set_glitch_filter(pcnt_unit_1, &filter));
 
-    ESP_ERROR_CHECK(pcnt_counter_pause(PCNT_UNIT_1));
-    ESP_ERROR_CHECK(pcnt_counter_clear(PCNT_UNIT_1));
-    // ESP_ERROR_CHECK(pcnt_counter_resume(PCNT_UNIT));
+    ESP_ERROR_CHECK(pcnt_unit_clear_count(pcnt_unit_0));
+    ESP_ERROR_CHECK(pcnt_unit_clear_count(pcnt_unit_1));
+    ESP_ERROR_CHECK(pcnt_unit_enable(pcnt_unit_0));
+    ESP_ERROR_CHECK(pcnt_unit_enable(pcnt_unit_1));
+    ESP_ERROR_CHECK(pcnt_unit_start(pcnt_unit_0));
+    ESP_ERROR_CHECK(pcnt_unit_start(pcnt_unit_1));
 }
 
-void pcnt_start() {
-    ESP_ERROR_CHECK(pcnt_counter_resume(PCNT_UNIT_0));
-    ESP_ERROR_CHECK(pcnt_counter_resume(PCNT_UNIT_1));
+void pcnt_start(int index) {
+    ESP_ERROR_CHECK(pcnt_unit_start(index == 0? pcnt_unit_0: pcnt_unit_1));
 }
 
-void pcnt_stop() {
-    ESP_ERROR_CHECK(pcnt_counter_pause(PCNT_UNIT_0));
-    ESP_ERROR_CHECK(pcnt_counter_pause(PCNT_UNIT_0));
+void pcnt_stop(int index) {
+    ESP_ERROR_CHECK(pcnt_unit_stop(index == 0? pcnt_unit_0: pcnt_unit_1));
 }
 
-void pcnt_get_value() {
-    if (systemconfig.pcnt.enabled == 0) return;
-    ESP_ERROR_CHECK(pcnt_get_counter_value(PCNT_UNIT_0, &pcnt_info.count01));
-    ESP_ERROR_CHECK(pcnt_get_counter_value(PCNT_UNIT_1, &pcnt_info.count02));
+void pcnt_get_value_01() {
+    if (systemconfig.pcnt.enabled_01 == 0) return;
+    ESP_ERROR_CHECK(pcnt_unit_get_count(pcnt_unit_0, &pcnt_info.count01));
+    ESP_ERROR_CHECK(pcnt_unit_clear_count(pcnt_unit_0));
+}
+
+void pcnt_get_value_02() {
+    if (systemconfig.pcnt.enabled_02 == 0) return;
+    ESP_ERROR_CHECK(pcnt_unit_get_count(pcnt_unit_1, &pcnt_info.count02));
+    ESP_ERROR_CHECK(pcnt_unit_clear_count(pcnt_unit_1));
+}
+
+// calculate the real data every 1s.
+void pcnt_calculate_real_data() {
     pcnt_info.bat_volt = (float)pcnt_info.count01 * systemconfig.pcnt.battery_scale;
     pcnt_info.rtd_volt = (float)pcnt_info.count02 * systemconfig.pcnt.rtd_scale;
     pcnt_info.temperature = pcnt_convert_temperature(RtdTable_1K, pcnt_info.rtd_volt);
@@ -108,8 +118,6 @@ void pcnt_get_value() {
         pcnt_info.duty = 0;
         gpio_set_level((gpio_num_t)systemconfig.pcnt.ctrl_pin, 0); // turn off
     }
-    ESP_ERROR_CHECK(pcnt_counter_clear(PCNT_UNIT_0));
-    ESP_ERROR_CHECK(pcnt_counter_clear(PCNT_UNIT_1));
 }
 
 

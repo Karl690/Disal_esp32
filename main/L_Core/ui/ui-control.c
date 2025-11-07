@@ -7,14 +7,14 @@ UI_CONTROL ui_control;
 
 LV_FONT_DECLARE(mono_regular_24);
 
-const uint8_t ui_control_data_size = 2;
+const uint8_t ui_control_data_size = 1;
 uint32_t ui_control_current_time;
 uint32_t ui_control_prev_time ;
 uint8_t ui_control_click_count = 0;
 
 void ui_control_timer_cb(lv_timer_t * timer)
 {
-	if (systemconfig.pcnt.enabled)
+	if (lv_obj_is_visible(ui_control_screen))
 	{
 		lv_label_set_text_fmt(ui_control.v_bat, "%dV", pcnt_info.bat_volt);
 		lv_label_set_text_fmt(ui_control.actual_temperature, "%d˚C", pcnt_info.temperature);
@@ -24,17 +24,20 @@ void ui_control_timer_cb(lv_timer_t * timer)
 }
 
 void ui_control_click_cb(lv_event_t* e) {
-	systemconfig.pcnt.enabled = systemconfig.pcnt.enabled == 1 ? 0 : 1;
-	if (systemconfig.pcnt.enabled == 1) {
-		pcnt_start();
-		ui_show_messagebox(MESSAGEBOX_INFO, "PCNT Enabled", 1000);
+	lv_obj_t* obj = lv_event_get_target_obj(e);
+	if (obj == ui_control.enabled_01) {
+		systemconfig.pcnt.enabled_01 = systemconfig.pcnt.enabled_01 == 1 ? 0 : 1;
+		if (systemconfig.pcnt.enabled_01) pcnt_start(0);
+		else pcnt_stop(0);
+		ui_show_messagebox(systemconfig.pcnt.enabled_01 ? MESSAGEBOX_INFO: MESSAGEBOX_ERROR, systemconfig.pcnt.enabled_01 ? "PCNT #01 is enabled" : "PCNT #01 is disabled" , 1000);
+		ui_helpers_button_color(ui_control.enabled_01, systemconfig.pcnt.enabled_01 == 1? 0x00ff00 : 0xff0000, UI_FOREGROUND_COLOR, 0);
+	} else {
+		systemconfig.pcnt.enabled_02 = systemconfig.pcnt.enabled_02 == 1 ? 0 : 1;
+		if (systemconfig.pcnt.enabled_02) pcnt_start(1);
+		else pcnt_stop(1);
+		ui_show_messagebox(systemconfig.pcnt.enabled_02 ? MESSAGEBOX_INFO: MESSAGEBOX_ERROR, systemconfig.pcnt.enabled_02 ? "PCNT #02 is enabled" : "PCNT #02 is disabled" , 1000);
+		ui_helpers_button_color(ui_control.enabled_02, systemconfig.pcnt.enabled_02 == 1? 0x00ff00 : 0xff0000, UI_FOREGROUND_COLOR, 0);
 	}
-	else {
-		pcnt_stop();
-		ui_show_messagebox(MESSAGEBOX_INFO, "PCNT Disabled", 1000);
-	}
-	ui_helpers_button_color(ui_control.enabled, systemconfig.pcnt.enabled == 1? 0x00ff00 : 0xff0000, UI_FOREGROUND_COLOR, 0);
-	ui_helpers_button_text(ui_control.enabled, systemconfig.pcnt.enabled == 1 ? "ON" : "OFF");
 }
 
 void ui_control_encoder_rotary_cb(lv_event_t* e)
@@ -65,7 +68,7 @@ void ui_control_encoder_rotary_cb(lv_event_t* e)
 			ui_control_click_count = 0;
 			return;
 		}
-		if (ui_control.focus_index == 2) {
+		if (ui_control.focus_index == ui_control_data_size) {
 			ui_transform_screen(SCREEN_HOME, LV_SCR_LOAD_ANIM_MOVE_LEFT, 300);
 			return;
 		}
@@ -81,8 +84,8 @@ void ui_control_encoder_rotary_cb(lv_event_t* e)
 		if (ui_control.select_index == -1) {
 			// change focus
 			ui_control.focus_index += direction;
-			if (ui_control.focus_index < 0)	 ui_control.focus_index = 2;
-			else if (ui_control.focus_index > 2) ui_control.focus_index = 0;
+			if (ui_control.focus_index < 0)	 ui_control.focus_index = ui_control_data_size;
+			else if (ui_control.focus_index > ui_control_data_size) ui_control.focus_index = 0;
 			lv_obj_set_style_text_color(ui_control.title, lv_color_hex(UI_ITEM_NORMAL_FG_COLOR), LV_PART_MAIN);
 			lv_obj_set_style_text_color(ui_control.focus, lv_color_hex(UI_ITEM_FOCUS_FG_COLOR), LV_PART_MAIN);
 			switch (ui_control.focus_index)
@@ -91,9 +94,6 @@ void ui_control_encoder_rotary_cb(lv_event_t* e)
 				lv_obj_set_y(ui_control.focus, lv_obj_get_y(ui_control.programmed_temperature) + 8);
 				break;
 			case 1:
-				lv_obj_set_y(ui_control.focus, lv_obj_get_y(ui_control.enabled) + 8);
-				break;
-			case 2:
 				lv_obj_set_y(ui_control.focus, -20 );
 				lv_obj_set_style_text_color(ui_control.title, lv_color_hex(UI_ITEM_FOCUS_FG_COLOR), LV_PART_MAIN);
 				break;
@@ -111,22 +111,8 @@ void ui_control_encoder_rotary_cb(lv_event_t* e)
 					systemconfig.pcnt.programmed_temperature = temp;
 				}
 				break;
-			case 1:
-				systemconfig.pcnt.enabled = systemconfig.pcnt.enabled == 1 ? 0 : 1;
-				if (systemconfig.pcnt.enabled == 1) {
-					pcnt_start();
-					ui_show_messagebox(MESSAGEBOX_INFO, "PCNT Enabled", 1000);
-				}
-				else {
-					pcnt_stop();
-					ui_show_messagebox(MESSAGEBOX_INFO, "PCNT Disabled", 1000);
-				}
-				ui_helpers_button_color(ui_control.enabled, systemconfig.pcnt.enabled == 1? 0x00ff00 : 0xff0000, UI_FOREGROUND_COLOR, 0);
-				ui_helpers_button_text(ui_control.enabled, systemconfig.pcnt.enabled == 1 ? "ON" : "OFF");
-				break;
 			}
 		}
-
 	}
 }
 
@@ -179,8 +165,18 @@ void ui_control_init(void)
 
 	lv_obj_set_pos(ui_control.focus, 35, y + 5);
 	
-	
 	y += step;
+	obj = ui_helpers_create_button(ui_control_screen, "PCNT #1", 80, 40, 5, &lv_font_montserrat_14, ui_control_click_cb, NULL);
+	ui_helpers_button_color(obj, systemconfig.pcnt.enabled_01 == 1? 0x00ff00: 0xff0000, UI_FOREGROUND_COLOR, 0);
+	lv_obj_set_pos(obj, 20, y);
+	ui_control.enabled_01 = obj;
+	
+	obj = ui_helpers_create_button(ui_control_screen, "PCNT #2", 80, 40, 5, &lv_font_montserrat_14, ui_control_click_cb, NULL);
+	ui_helpers_button_color(obj, systemconfig.pcnt.enabled_02 == 1? 0x00ff00: 0xff0000, UI_FOREGROUND_COLOR, 0);
+	lv_obj_set_pos(obj, 130, y);
+	ui_control.enabled_02 = obj;
+	
+	y += step + 20;
 	obj = ui_helpers_create_label(ui_control_screen, "Duty:", &lv_font_montserrat_14);
 	lv_obj_set_style_text_color(obj, lv_color_hex(UI_LABEL_COLOR), LV_PART_MAIN);
 	lv_obj_set_pos(obj, 55, y+5);
@@ -195,12 +191,5 @@ void ui_control_init(void)
 	obj = ui_helpers_create_label(ui_control_screen, "0V", &mono_regular_24);
 	ui_control.v_bat = obj;
 	lv_obj_set_pos(obj, 150, y);
-	
-	y += step;
-	obj = ui_helpers_create_button(ui_control_screen, systemconfig.pcnt.enabled == 1? "ON": "OFF", 100, 40, 5, &lv_font_montserrat_14, ui_control_click_cb, NULL);
-	ui_helpers_button_color(obj, systemconfig.pcnt.enabled == 1? 0x00ff00: 0xff0000, UI_FOREGROUND_COLOR, 0);
-	lv_obj_align(obj, LV_ALIGN_BOTTOM_MID, 0, -20);
-	ui_control.enabled = obj;
-
 	lv_timer_create(ui_control_timer_cb, 1000, NULL);
 }

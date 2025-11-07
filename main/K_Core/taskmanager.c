@@ -22,10 +22,10 @@ const PFUNC F100HZ[NUM_100HZ] =
 {
 	Spare,
 	Spare,
+	pcnt_get_value_01,
 	Spare,
 	Spare,
-	Spare,
-	Spare,
+	pcnt_get_value_02,
 	Spare,
 	Spare,
 };
@@ -50,7 +50,7 @@ const PFUNC F1HZ[NUM_1HZ] =
 	Spare,
 	Spare,
 	Spare,
-	pcnt_get_value,
+	pcnt_calculate_real_data,
 	BlinkHeartBeat,
 };
 /*

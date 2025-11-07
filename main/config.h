@@ -40,7 +40,8 @@ typedef struct
 {
 	uint8_t pcnt_pin_01;
 	uint8_t pcnt_pin_02;
-	uint8_t enabled;
+	uint8_t enabled_01;
+	uint8_t enabled_02;
 	uint8_t ctrl_pin;
 	uint16_t programmed_temperature;
 	float temp_scale;

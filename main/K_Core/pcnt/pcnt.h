@@ -15,8 +15,8 @@
 
 typedef struct 
 {
-    int16_t count01;
-    int16_t count02;
+    int count01;
+    int count02;
     float temperature; //'C    
     int16_t freq; //in Hz
     float duty; //in %
@@ -34,7 +34,9 @@ extern PCNT_INFO pcnt_info;
 
 
 void pcnt_init(void);
-void pcnt_start(void);
-void pcnt_stop(void);
-void pcnt_get_value();
+void pcnt_start(int);
+void pcnt_stop(int);
+void pcnt_get_value_01();
+void pcnt_get_value_02();
+void pcnt_calculate_real_data();
 float pcnt_convert_temperature(float voltage);
