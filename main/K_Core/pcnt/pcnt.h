@@ -36,7 +36,9 @@ extern PCNT_INFO pcnt_info;
 void pcnt_init(void);
 void pcnt_start(int);
 void pcnt_stop(int);
-void pcnt_get_value_01();
-void pcnt_get_value_02();
-void pcnt_calculate_real_data();
+void Convert_Counter1_Temperature();
+void Convert_Counter2_BatteryVoltage();
 float pcnt_convert_temperature(float voltage);
+
+void ReadCount1();
+void ReadCount2();

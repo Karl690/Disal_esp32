@@ -22,11 +22,11 @@ const PFUNC F100HZ[NUM_100HZ] =
 {
 	Spare,
 	Spare,
-	pcnt_get_value_01,
+	ReadCount1,
+	Convert_Counter1_Temperature,
 	Spare,
-	Spare,
-	pcnt_get_value_02,
-	Spare,
+	ReadCount2,
+	Convert_Counter2_BatteryVoltage,
 	Spare,
 };
 
@@ -50,7 +50,7 @@ const PFUNC F1HZ[NUM_1HZ] =
 	Spare,
 	Spare,
 	Spare,
-	pcnt_calculate_real_data,
+	Spare,
 	BlinkHeartBeat,
 };
 /*

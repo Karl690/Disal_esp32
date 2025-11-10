@@ -93,26 +93,14 @@ void pcnt_stop(int index) {
     ESP_ERROR_CHECK(pcnt_unit_stop(index == 0? pcnt_unit_0: pcnt_unit_1));
 }
 
-void pcnt_get_value_01() {
-    if (systemconfig.pcnt.enabled_01 == 0) return;
-    ESP_ERROR_CHECK(pcnt_unit_get_count(pcnt_unit_0, &pcnt_info.count01));
-    ESP_ERROR_CHECK(pcnt_unit_clear_count(pcnt_unit_0));
-}
-
-void pcnt_get_value_02() {
-    if (systemconfig.pcnt.enabled_02 == 0) return;
-    ESP_ERROR_CHECK(pcnt_unit_get_count(pcnt_unit_1, &pcnt_info.count02));
-    ESP_ERROR_CHECK(pcnt_unit_clear_count(pcnt_unit_1));
-}
 
 // calculate the real data every 1s.
-void pcnt_calculate_real_data() {
-    pcnt_info.bat_volt = (float)pcnt_info.count01 * systemconfig.pcnt.battery_scale;
-    pcnt_info.rtd_volt = (float)pcnt_info.count02 * systemconfig.pcnt.rtd_scale;
+void Convert_Counter1_Temperature() {
     pcnt_info.temperature = pcnt_convert_temperature(RtdTable_1K, pcnt_info.rtd_volt);
     float deltaTemp = systemconfig.pcnt.programmed_temperature - pcnt_info.temperature;
     if (deltaTemp != 0) {
-        pcnt_info.duty = deltaTemp * systemconfig.pcnt.temp_scale;
+        if (systemconfig.pcnt.duty_test > 0) pcnt_info.duty = deltaTemp * systemconfig.pcnt.temp_scale;
+        else pcnt_info.duty = 0;
         gpio_set_level((gpio_num_t)systemconfig.pcnt.ctrl_pin, 1); // turn on
     } else {
         pcnt_info.duty = 0;
@@ -120,6 +108,10 @@ void pcnt_calculate_real_data() {
     }
 }
 
+void Convert_Counter2_BatteryVoltage() {
+    pcnt_info.bat_volt = (float)pcnt_info.count01 * systemconfig.pcnt.battery_scale;
+    pcnt_info.rtd_volt = (float)pcnt_info.count02 * systemconfig.pcnt.rtd_scale;
+}
 
 float pcnt_convert_temperature( const AdcTableStruct* adcTable, float voltage) {
     uint8_t leftIndex = 0, rightIndex = 0;
@@ -138,4 +130,16 @@ float pcnt_convert_temperature( const AdcTableStruct* adcTable, float voltage) {
 	float a = (adcTable[rightIndex].value - adcTable[leftIndex].value) / (float)(adcTable[rightIndex].adcRaw - adcTable[leftIndex].adcRaw);
 	float y = a * (voltage - adcTable[leftIndex].adcRaw) + adcTable[leftIndex].value;
     return y * PCNT_TEMP_SCAL_VALUE;
+}
+
+void ReadCount1() {
+    if (systemconfig.pcnt.enabled_01 == 0) return;
+    ESP_ERROR_CHECK(pcnt_unit_get_count(pcnt_unit_0, &pcnt_info.count01));
+    ESP_ERROR_CHECK(pcnt_unit_clear_count(pcnt_unit_0));
+}
+
+void ReadCount2() {
+    if (systemconfig.pcnt.enabled_02 == 0) return;
+    ESP_ERROR_CHECK(pcnt_unit_get_count(pcnt_unit_1, &pcnt_info.count02));
+    ESP_ERROR_CHECK(pcnt_unit_clear_count(pcnt_unit_1));
 }
