@@ -41,14 +41,13 @@ AdcTableStruct const RtdTable_1K[] __attribute__((aligned(4))) =
 	// in reality, to get to MAX_ADC, would take about 10 billion degrees.
 };
 
-float pcnt_convert_temperature(const AdcTableStruct* adcTable, float voltage);
 
 void pcnt_init(void) {
     pcnt_unit_config_t cfg0 = { 
         .low_limit = -32767,
         .high_limit = 32767, 
     };
-    cfg0.flags.accum_count = false;
+    cfg0.flags.accum_count = true;
     ESP_ERROR_CHECK(pcnt_new_unit(&cfg0, &pcnt_unit_0));
 
     pcnt_chan_config_t chan0_cfg = { 
@@ -85,7 +84,7 @@ void pcnt_init(void) {
     ESP_ERROR_CHECK(pcnt_channel_set_edge_action(chan1, PCNT_CHANNEL_EDGE_ACTION_INCREASE, PCNT_CHANNEL_EDGE_ACTION_HOLD));
     ESP_ERROR_CHECK(pcnt_channel_set_level_action(chan1, PCNT_CHANNEL_LEVEL_ACTION_KEEP, PCNT_CHANNEL_LEVEL_ACTION_KEEP));
     
-    pcnt_glitch_filter_config_t filter_config = { .max_glitch_ns = 1000 };
+    pcnt_glitch_filter_config_t filter_config = { .max_glitch_ns = 100 };
     ESP_ERROR_CHECK(pcnt_unit_set_glitch_filter(pcnt_unit_0, &filter_config));
     ESP_ERROR_CHECK(pcnt_unit_set_glitch_filter(pcnt_unit_1, &filter_config));
 
@@ -164,14 +163,14 @@ float pcnt_convert_temperature( const AdcTableStruct* adcTable, float voltage) {
 }
 
 void ReadCount1() {
-    if (systemconfig.pcnt.enabled == 0) return;
+//    if (systemconfig.pcnt.enabled == 0) return;
     ESP_ERROR_CHECK(pcnt_unit_get_count(pcnt_unit_0, &pcnt_info.count01));
     ESP_ERROR_CHECK(pcnt_unit_clear_count(pcnt_unit_0));
     // ESP_LOGI(TAG, "Read Count1 : %d", pcnt_info.count01);
 }
 
 void ReadCount2() {
-    if (systemconfig.pcnt.enabled == 0) return;
+//    if (systemconfig.pcnt.enabled == 0) return;
     ESP_ERROR_CHECK(pcnt_unit_get_count(pcnt_unit_1, &pcnt_info.count02));
     ESP_ERROR_CHECK(pcnt_unit_clear_count(pcnt_unit_1));
     // ESP_LOGI(TAG, "Read Count2 : %d", pcnt_info.count02);
