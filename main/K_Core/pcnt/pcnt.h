@@ -39,6 +39,6 @@ void DisableCounter();
 void Convert_Counter1_Temperature();
 void Convert_Counter2_BatteryVoltage();
 float pcnt_convert_temperature(float voltage);
-
+void SetPwmOutput();
 void ReadCount1();
 void ReadCount2();

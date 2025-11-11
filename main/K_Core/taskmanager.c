@@ -24,7 +24,7 @@ const PFUNC F100HZ[NUM_100HZ] =
 	Spare,
 	ReadCount1,
 	Convert_Counter1_Temperature,
-	Spare,
+	SetPwmOutput,
 	ReadCount2,
 	Convert_Counter2_BatteryVoltage,
 	Spare,
