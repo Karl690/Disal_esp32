@@ -11,8 +11,7 @@ typedef struct {
     int8_t select_index;
     lv_obj_t* title;
     lv_obj_t* programmed_temperature;
-    lv_obj_t* enabled_01;
-    lv_obj_t* enabled_02;
+    lv_obj_t* enabled;
     lv_obj_t* actual_temperature;
     lv_obj_t* duty;
     lv_obj_t* v_bat;

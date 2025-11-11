@@ -19,7 +19,8 @@
         "type_traits": "cpp",
         "utility": "cpp",
         "ui-control.h": "c",
-        "numbers": "cpp"
+        "numbers": "cpp",
+        "pcnt.h": "c"
     },
     "idf.espIdfPathWin": "C:\\Users\\falcon\\esp\\v5.4.3\\esp-idf",
     "idf.toolsPathWin": "C:\\Users\\falcon\\.espressif",

@@ -51,9 +51,9 @@ extern "C" void app_main(void)
 bool load_configuration()
 {
 	storage_nvs_get_blob(NVS_KEY_CONFIG, &systemconfig);
-	if (!utils_valid_pins(systemconfig.pcnt.pcnt_pin_01)) systemconfig.pcnt.pcnt_pin_01 = PCNT_INPUT_PIN_01;
-	if (!utils_valid_pins(systemconfig.pcnt.pcnt_pin_02)) systemconfig.pcnt.pcnt_pin_02 = PCNT_INPUT_PIN_02;
-	if (!utils_valid_pins(systemconfig.pcnt.ctrl_pin)) systemconfig.pcnt.ctrl_pin = PCNT_CTRL_PIN;
+	if (!utils_valid_pins(systemconfig.pcnt.pcnt_pin_01)) systemconfig.pcnt.pcnt_pin_01 = Counter1_INPUT_PIN;
+	if (!utils_valid_pins(systemconfig.pcnt.pcnt_pin_02)) systemconfig.pcnt.pcnt_pin_02 = Counter2_INPUT_PIN;
+	if (!utils_valid_pins(systemconfig.pcnt.ctrl_pin)) systemconfig.pcnt.ctrl_pin = ControlOutput_PIN;
 	if (systemconfig.pcnt.programmed_temperature == 0x0) systemconfig.pcnt.programmed_temperature = 25;
 	
 	if (systemconfig.pcnt.temp_scale == 0.0f) systemconfig.pcnt.temp_scale = PCNT_TEMP_SCAL_VALUE;

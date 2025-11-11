@@ -1,9 +1,9 @@
 #pragma once
 #include "main.h"
 
-#define PCNT_INPUT_PIN_01 GPIO_NUM_2
-#define PCNT_INPUT_PIN_02 GPIO_NUM_13
-#define PCNT_CTRL_PIN GPIO_NUM_1
+#define Counter1_INPUT_PIN GPIO_NUM_2
+#define Counter2_INPUT_PIN GPIO_NUM_13
+#define ControlOutput_PIN GPIO_NUM_1
 
 
 #define SAMPLE_TIME_MS      1000
@@ -31,11 +31,11 @@ typedef struct {
 
 
 extern PCNT_INFO pcnt_info;
-
+extern int PwmTimerReloadRegister;
 
 void pcnt_init(void);
-void pcnt_start(int);
-void pcnt_stop(int);
+void EnableCounter();
+void DisableCounter();
 void Convert_Counter1_Temperature();
 void Convert_Counter2_BatteryVoltage();
 float pcnt_convert_temperature(float voltage);
