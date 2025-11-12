@@ -14,7 +14,7 @@ const PFUNC F1000HZ[NUM_1000HZ] =
 	Spare,
 	Spare,
 	Spare,
-	Spare,
+	SetPwmOutput,
 	Spare,
 };
 
@@ -24,9 +24,9 @@ const PFUNC F100HZ[NUM_100HZ] =
 	Read_Counters,
 	Spare,
 	Convert_Counter1_To_Temperature,
-	SetPwmOutput,
+	Spare, 
 	Spare,
-	Scale_BatteryVoltage,
+	Spare, //Scale_BatteryVoltage,
 	Spare,
 };
 

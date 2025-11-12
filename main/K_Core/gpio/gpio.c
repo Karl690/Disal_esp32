@@ -1,8 +1,8 @@
 #include "gpio.h"
 
 void gpio_init() {
-    // gpio_set_mode(ControlOutput_PIN, GPIO_OUTPUT);
-    // gpio_set_level(ControlOutput_PIN, 0);
+     gpio_set_mode(ControlOutput_PIN, GPIO_OUTPUT);
+     gpio_set_level(ControlOutput_PIN, 0);//disable the heater until code is stable
 }
 
 void gpio_set_mode(gpio_num_t pin, GPIO_MODE mode) {

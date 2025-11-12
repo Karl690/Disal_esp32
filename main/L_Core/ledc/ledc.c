@@ -32,17 +32,17 @@ void ledc_init() {
     };
     ESP_ERROR_CHECK(ledc_channel_config(&ledc_tone_channel));
 
-     // Configure LEDC channel
-    ledc_channel_config_t ledc_pwm_channel = {
-        .gpio_num       = ControlOutput_PIN,
-        .speed_mode     = LEDC_MODE,
-        .channel        = LEDC_CHANNEL_PWM_CTL,
-        .intr_type      = LEDC_INTR_DISABLE,
-        .timer_sel      = LEDC_TIMER_PWM_CTL,
-        .duty           = 0,
-        .hpoint         = 0
-    };
-    ESP_ERROR_CHECK(ledc_channel_config(&ledc_pwm_channel));
+//     // Configure LEDC channel
+//    ledc_channel_config_t ledc_pwm_channel = {
+//        .gpio_num       = ControlOutput_PIN,
+//        .speed_mode     = LEDC_MODE,
+//        .channel        = LEDC_CHANNEL_PWM_CTL,
+//        .intr_type      = LEDC_INTR_DISABLE,
+//        .timer_sel      = LEDC_TIMER_PWM_CTL,
+//        .duty           = 0,
+//        .hpoint         = 0
+//    };
+//    ESP_ERROR_CHECK(ledc_channel_config(&ledc_pwm_channel));
 }
 
 void ledc_tone(uint32_t freq, uint32_t duration_ms) {
