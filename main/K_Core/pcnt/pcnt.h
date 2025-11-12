@@ -4,10 +4,10 @@
 
 #define SAMPLE_TIME_MS      1000
 
-#define PCNT_BATTERY_SCAL_VALUE  1.0
-#define PCNT_RTD_SCAL_VALUE      1.0
-#define PCNT_TEMP_SCAL_VALUE       1.0
-#define PCNT_DUTY_SCAL_VALUE       1.0
+#define PCNT_BATTERY_SCAL_VALUE  1000.0
+#define PCNT_RTD_SCAL_VALUE      1000.0
+#define PCNT_TEMP_SCAL_VALUE       1000.0
+#define PCNT_DUTY_SCAL_VALUE       1000.0
 
 typedef struct 
 {

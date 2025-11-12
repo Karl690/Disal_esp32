@@ -1,6 +1,6 @@
 {
     "idf.portWin": "COM3",
-    "idf.flashType": "JTAG",
+    "idf.flashType": "UART",
     "files.associations": {
         "ui.h": "c",
         "font.h": "c",

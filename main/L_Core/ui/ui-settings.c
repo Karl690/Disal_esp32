@@ -4,11 +4,11 @@
 lv_obj_t* ui_settings_screen;
 UI_SETTINGS ui_settings;
 UI_SETTINGS_DATA_ITEM ui_settings_data[] = {
-	{"Temp Scale", &systemconfig.pcnt.temp_scale, VALUE_TYPE_FLOAT},
-	{"BAT Scale", &systemconfig.pcnt.battery_scale, VALUE_TYPE_FLOAT},
-	{"RTD Scale", &systemconfig.pcnt.rtd_scale, VALUE_TYPE_FLOAT},
-	{"Duty Scale", &systemconfig.pcnt.duty_scale, VALUE_TYPE_FLOAT},
-	{"Duty Test", &systemconfig.pcnt.duty_test, VALUE_TYPE_INT},
+	{"Temp Scale", &systemconfig.pcnt.temp_scale, VALUE_TYPE_FLOAT, 1, 65535},
+	{"BAT Scale", &systemconfig.pcnt.battery_scale, VALUE_TYPE_FLOAT, 1, 65535},
+	{"RTD Scale", &systemconfig.pcnt.rtd_scale, VALUE_TYPE_FLOAT, 1, 65535},
+	{"Duty Scale", &systemconfig.pcnt.duty_scale, VALUE_TYPE_FLOAT, 1, 65535},
+	{"Duty Test", &systemconfig.pcnt.duty_test, VALUE_TYPE_INT, 0, 100},
 };
 #define UI_SETTINGS_ITEM_SIZE 3
 UI_SETTINGS_ITEM ui_settings_ui_items[UI_SETTINGS_ITEM_SIZE];
@@ -33,7 +33,8 @@ void ui_settings_update_focus_items() {
 			switch (item->data_item->type)
 			{
 			case VALUE_TYPE_INT:
-				lv_label_set_text_fmt(item->value, "%d", *(int*)item->data_item->value_ptr);
+				sprintf(ui_temp_buffer, "%d", *(int*)item->data_item->value_ptr);
+				lv_label_set_text(item->value, ui_temp_buffer);
 				break;
 			case VALUE_TYPE_FLOAT:
 				sprintf(ui_temp_buffer, "%.2f", *(float*)item->data_item->value_ptr);
@@ -87,11 +88,18 @@ void ui_settings_update_value(UI_SETTINGS_ITEM* ui_item, int direction) {
 	switch (item->type)
 	{
 	case VALUE_TYPE_INT:
-		*(int*)item->value_ptr += direction;
-		lv_label_set_text_fmt(ui_item->value, "%d", *(int*)item->value_ptr);
+		a = *(int*)item->value_ptr + direction;
+		if (a < item->min) a = item->min;
+		if (a > item->max) a = item->max;
+		*(int*)item->value_ptr = a;
+		sprintf(ui_temp_buffer, "%d", *(int*)(item->value_ptr));
+		lv_label_set_text(ui_item->value, ui_temp_buffer);
 		break;
 	case VALUE_TYPE_FLOAT:
-		*(float*)item->value_ptr += direction * 0.01;
+		b = *(float*)item->value_ptr + direction * 0.01;
+		if (b < item->min) b = item->min;
+		if (b > item->max) b = item->max;
+		*(float*)item->value_ptr = b;
 		sprintf(ui_temp_buffer, "%.2f", *(float*)(item->value_ptr));
 		lv_label_set_text(ui_item->value, ui_temp_buffer);
 		break;

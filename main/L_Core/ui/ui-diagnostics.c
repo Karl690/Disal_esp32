@@ -9,7 +9,7 @@ lv_obj_t* ui_diag_screen;
 UI_DIAG ui_diag;
 UI_DIAG_DATA_ITEM ui_diag_data[] = {
 	{"CNT#1", &pcnt_info.count01, VALUE_TYPE_INT},
-	{"CNT#1", &pcnt_info.count02, VALUE_TYPE_INT},
+	{"CNT#2", &pcnt_info.count02, VALUE_TYPE_INT},
 	{"TEMP", &pcnt_info.temperature, VALUE_TYPE_FLOAT},
 	{"freq", &pcnt_info.freq, VALUE_TYPE_INT},
 	{"Duty", &pcnt_info.duty, VALUE_TYPE_FLOAT},

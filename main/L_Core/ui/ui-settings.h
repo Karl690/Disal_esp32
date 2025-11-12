@@ -19,6 +19,8 @@ typedef struct {
     char title[32];
     void* value_ptr;
     uint8_t type; //0: int, 1: float, 2: bool
+	int min;
+	int max;
 } UI_SETTINGS_DATA_ITEM;
 
 typedef struct {

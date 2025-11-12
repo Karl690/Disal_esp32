@@ -124,7 +124,7 @@ void SetPwmOutput()
 {
 	
 //test pulse 
-	systemconfig.pcnt.duty_test++; //count up
+	// systemconfig.pcnt.duty_test++; //count up
 	if (systemconfig.pcnt.duty_test & 0x0001)
 	{
 		gpio_set_level(ControlOutput_PIN, 1); //disable the heater until code is stable
