@@ -21,12 +21,12 @@ const PFUNC F1000HZ[NUM_1000HZ] =
 const PFUNC F100HZ[NUM_100HZ] =
 {
 	Spare,
+	Read_Counters,
 	Spare,
-	ReadCount1,
-	Convert_Counter1_Temperature,
+	Convert_Counter1_To_Temperature,
 	SetPwmOutput,
-	ReadCount2,
-	Convert_Counter2_BatteryVoltage,
+	Spare,
+	Scale_BatteryVoltage,
 	Spare,
 };
 

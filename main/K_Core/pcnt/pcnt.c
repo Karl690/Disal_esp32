@@ -13,7 +13,11 @@ PCNT_INFO pcnt_info = {0, 0, 0, 0, 0, 0};
 pcnt_unit_handle_t pcnt_unit_0 = NULL;
 pcnt_unit_handle_t pcnt_unit_1 = NULL;
 int PwmTimerReloadRegister = 0;
-
+int TemperatureFreq;
+int Battery_V_Freq;
+float RtdVoltage;
+float Temperature;
+float BatteryVoltage;
 AdcTableStruct const RtdTable_1K[] __attribute__((aligned(4))) =
 { // 1K RTD -- based on datasheet
 		// 20 entries; 4 bytes each; 80 bytes total
@@ -95,7 +99,7 @@ void pcnt_init(void) {
     ESP_ERROR_CHECK(pcnt_unit_clear_count(pcnt_unit_1));
    
     ESP_ERROR_CHECK(pcnt_unit_start(pcnt_unit_0));
-    ESP_ERROR_CHECK(pcnt_unit_start(pcnt_unit_1));
+    ESP_ERROR_CHECK(pcnt_unit_start(pcnt_unit_1));  
 }
 
 void EnableCounter() {
@@ -110,8 +114,12 @@ void DisableCounter() {
 }
 
 // calculate the real data every 1s.
-void Convert_Counter1_Temperature() {
-    pcnt_info.temperature = pcnt_convert_temperature(RtdTable_1K, pcnt_info.rtd_volt);
+void Convert_Counter1_To_Temperature() {
+    RtdVoltage = TemperatureFreq * systemconfig.pcnt.rtd_scale;
+    Temperature = pcnt_convert_temperature(RtdTable_1K, RtdVoltage);
+    pcnt_info.rtd_volt = RtdVoltage;
+    pcnt_info.temperature = Temperature;
+
     float deltaTemp = systemconfig.pcnt.programmed_temperature - pcnt_info.temperature;
     if (deltaTemp != 0) {
         if (systemconfig.pcnt.duty_test > 0) pcnt_info.duty = deltaTemp * systemconfig.pcnt.temp_scale;
@@ -138,9 +146,11 @@ void SetPwmOutput()
 	}
 }
 
-void Convert_Counter2_BatteryVoltage() {
-    pcnt_info.bat_volt = (float)pcnt_info.count01 * systemconfig.pcnt.battery_scale;
-    pcnt_info.rtd_volt = (float)pcnt_info.count02 * systemconfig.pcnt.rtd_scale;
+void Scale_BatteryVoltage() {
+    BatteryVoltage = Battery_V_Freq * systemconfig.pcnt.battery_scale;
+    pcnt_info.bat_volt = BatteryVoltage;
+
+     
 }
 
 float pcnt_convert_temperature( const AdcTableStruct* adcTable, float voltage) {
@@ -162,16 +172,12 @@ float pcnt_convert_temperature( const AdcTableStruct* adcTable, float voltage) {
     return y * PCNT_TEMP_SCAL_VALUE;
 }
 
-void ReadCount1() {
-//    if (systemconfig.pcnt.enabled == 0) return;
+void Read_Counters() {
     ESP_ERROR_CHECK(pcnt_unit_get_count(pcnt_unit_0, &pcnt_info.count01));
     ESP_ERROR_CHECK(pcnt_unit_clear_count(pcnt_unit_0));
-    // ESP_LOGI(TAG, "Read Count1 : %d", pcnt_info.count01);
-}
+    TemperatureFreq= pcnt_info.count01;
 
-void ReadCount2() {
-//    if (systemconfig.pcnt.enabled == 0) return;
     ESP_ERROR_CHECK(pcnt_unit_get_count(pcnt_unit_1, &pcnt_info.count02));
     ESP_ERROR_CHECK(pcnt_unit_clear_count(pcnt_unit_1));
-    // ESP_LOGI(TAG, "Read Count2 : %d", pcnt_info.count02);
+    Battery_V_Freq= pcnt_info.count02;
 }

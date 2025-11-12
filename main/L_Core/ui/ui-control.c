@@ -174,11 +174,11 @@ void ui_control_init(void)
 	ui_control.v_bat = obj;
 	lv_obj_set_pos(obj, 150, y);
 
-	y += step;
-	obj = ui_helpers_create_button(ui_control_screen, systemconfig.pcnt.enabled== 1? "ON": "OFF", 80, 40, 5, &lv_font_montserrat_14, ui_control_click_cb, NULL);
-	ui_helpers_button_color(obj, systemconfig.pcnt.enabled== 1? 0x00ff00: 0xff0000, UI_FOREGROUND_COLOR, 0);
-	lv_obj_align(obj, LV_ALIGN_TOP_MID, 0, y);
-	ui_control.enabled = obj;
+	// y += step;
+	// obj = ui_helpers_create_button(ui_control_screen, systemconfig.pcnt.enabled== 1? "ON": "OFF", 80, 40, 5, &lv_font_montserrat_14, ui_control_click_cb, NULL);
+	// ui_helpers_button_color(obj, systemconfig.pcnt.enabled== 1? 0x00ff00: 0xff0000, UI_FOREGROUND_COLOR, 0);
+	// lv_obj_align(obj, LV_ALIGN_TOP_MID, 0, y);
+	// ui_control.enabled = obj;
 	
 	lv_timer_create(ui_control_timer_cb, 1000, NULL);
 }

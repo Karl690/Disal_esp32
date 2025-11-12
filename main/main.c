@@ -39,8 +39,8 @@ extern "C" void app_main(void)
 	bsp_display_unlock();
 	// wifi_init();
 	ble_init();
-	ledc_init();
-	tone_init();
+	// ledc_init();
+	// tone_init();
 
 	K_Core_Main();
 

@@ -1,10 +1,6 @@
 #pragma once
 #include "main.h"
 
-#define Counter1_INPUT_PIN GPIO_NUM_2
-#define Counter2_INPUT_PIN GPIO_NUM_13
-#define ControlOutput_PIN GPIO_NUM_1
-
 
 #define SAMPLE_TIME_MS      1000
 
@@ -36,10 +32,9 @@ extern int PwmTimerReloadRegister;
 void pcnt_init(void);
 void EnableCounter();
 void DisableCounter();
-void Convert_Counter1_Temperature();
-void Convert_Counter2_BatteryVoltage();
+void Convert_Counter1_To_Temperature();
+void Scale_BatteryVoltage();
 //float pcnt_convert_temperature(float voltage);
 float pcnt_convert_temperature(const AdcTableStruct* adcTable, float voltage);
 void SetPwmOutput();
-void ReadCount1();
-void ReadCount2();
+void Read_Counters();
