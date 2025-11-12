@@ -5,7 +5,7 @@
 PCNT_INFO pcnt_info = {0, 0, 0, 0, 0, 0};
 
 #define MAX_ADC12 						4096
-#define TEMP_FRAC_BITS                  0
+#define TEMP_FRAC_BITS                  5
 #define TEMP_SCALE                      32
 #define TEMP_SCALEF                     32.0f
 #define MAX_TEMP                        0x7fff  // max positive
@@ -103,11 +103,11 @@ void DisableCounter() {
 }
 
 // calculate the real data every 1s.
-void Convert_Counter1_To_Temperature() {
+void Calculate_Heater_DutyCycle() {
 	//at this point the counter has been read and converted to a voltage "RtdVoltage"
    // RtdVoltage = TemperatureFreq * systemconfig.pcnt.rtd_scale; old method
-    Temperature = pcnt_convert_temperature(RtdTable_1K, RtdVoltage);//use lookup table to convert voltage to temperature
-    pcnt_info.temperature = Temperature;
+//    Temperature = Convert_using_Lookup_Table(RtdTable_1K, RtdVoltage);//use lookup table to convert voltage to temperature
+//    pcnt_info.temperature = Temperature;
 
     float deltaTemp = systemconfig.pcnt.programmed_temperature - pcnt_info.temperature;
     if (deltaTemp != 0) {
@@ -124,7 +124,7 @@ void SetPwmOutput()
 {
 	
 //test pulse 
-	// systemconfig.pcnt.duty_test++; //count up
+	 systemconfig.pcnt.duty_test++; //count up
 	if (systemconfig.pcnt.duty_test & 0x0001)
 	{
 		gpio_set_level(ControlOutput_PIN, 1); //disable the heater until code is stable
@@ -153,33 +153,52 @@ void Scale_BatteryVoltage() {
      
 }
 
-float pcnt_convert_temperature( const AdcTableStruct* adcTable, float voltage) {
-    uint8_t leftIndex = 0, rightIndex = 0;
-
-	while (adcTable[rightIndex].adcRaw != MAX_ADC12)
+float convertRtdDataFromRawADCValue( const AdcTableStruct* adcTable, float RTD_Voltage) 
+{
+	uint16_t Index = 0; //need a pointer to know where in the table we are working
+	int tablesize = sizeof adcTable;
+	float conversionValue = 0;
+	if (RTD_Voltage == 0)return conversionValue;//IF raw is 0 then we are at 0
+	//need check for max a2d value also, to prevent bogus information.
+	//now we will walk thru the table to find the index to the first RAW data that is >= rawData
+	for (Index = 0; Index < 32; Index++)  //table size did not work, it gives the 4 bytes of the entry
 	{
-		if (voltage <= adcTable[rightIndex].adcRaw) {
-
-			break;
-		}
-		rightIndex++;
+		if (adcTable[Index].adcRaw >= RTD_Voltage) break;//found our index
 	}
-	if (rightIndex == 0) return adcTable[rightIndex].adcRaw;
-	else if (rightIndex > 0) leftIndex = rightIndex - 1;
-
-	float a = (adcTable[rightIndex].value - adcTable[leftIndex].value) / (float)(adcTable[rightIndex].adcRaw - adcTable[leftIndex].adcRaw);
-	float y = a * (voltage - adcTable[leftIndex].adcRaw) + adcTable[leftIndex].value;
-    return y * PCNT_TEMP_SCAL_VALUE;
+	//check for 3 unique cases
+	//if rawdata and table.rawdata match, then the temperature also matches
+	//if rawdata is 0
+	//if rawdata is == max_adc12 value
+	//if any  of these are true,then we simply return the adctable.value
+	if ((adcTable[Index].adcRaw == RTD_Voltage) || (RTD_Voltage == 0) || (adcTable[Index].adcRaw >= MAX_ADC12))
+	{
+		//lucky, we hit the value exaclty, so we are actually exaclty the table entry in size
+		conversionValue = (float)adcTable[Index].value;
+		return conversionValue;
+	}
+	//ok at this point were have a index to the first RAW value that is greater than the actual raw
+	//dat a value, we need to make sure our rawdata value falls between the 2 points in the table
+	if (Index > 0) Index--; //if we are already at zero, we will use this pointer, 
+	float DeltaTemperatureValue = adcTable[Index + 1].value - adcTable[Index].value;
+	float DeltaRawData = adcTable[Index + 1].adcRaw - adcTable[Index].adcRaw;
+	float conversionCoeffecient = DeltaTemperatureValue / DeltaRawData;
+	//now we have the coeffecient between the 2 points in the table
+	//next we will get the offset value between the first point and the raw data
+	int rawRemainder = RTD_Voltage - adcTable[Index].adcRaw;
+	float offsetTemperatureValue = rawRemainder*conversionCoeffecient;
+	conversionValue = offsetTemperatureValue + adcTable[Index].value;
+	conversionValue /= TEMP_SCALEF; //divide by the temp bits to scale to degrees c.
+	return conversionValue;
 }
 
 void Read_Counters() {
 	//reads both counter1 and 2, then resets counters to 0, used in 100hz loop
 	//so we are actually getting frequency in 100 hz resolution
-    ESP_ERROR_CHECK(pcnt_unit_get_count(PulseCounter_1, &pcnt_info.count01));
+    ESP_ERROR_CHECK(pcnt_unit_get_count(PulseCounter_1, &pcnt_info.count02));
     ESP_ERROR_CHECK(pcnt_unit_clear_count(PulseCounter_1));
 
 
-    ESP_ERROR_CHECK(pcnt_unit_get_count(PulseCounter_2, &pcnt_info.count02));
+    ESP_ERROR_CHECK(pcnt_unit_get_count(PulseCounter_2, &pcnt_info.count01));
     ESP_ERROR_CHECK(pcnt_unit_clear_count(PulseCounter_2));
     Battery_V_Freq= pcnt_info.count02;
 	//now process the variables into voltage
@@ -189,5 +208,8 @@ void Read_Counters() {
 	//battery voltage next
 	BatteryVoltage = Battery_V_Freq / systemconfig.pcnt.battery_scale;
 	pcnt_info.bat_volt = BatteryVoltage;//update global variable
+	//convert to temperature
+	Temperature = convertRtdDataFromRawADCValue(RtdTable_1K, RtdVoltage); //use lookup table to convert voltage to temperature
+	pcnt_info.temperature = Temperature;
 	
 }

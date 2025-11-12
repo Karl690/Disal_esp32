@@ -23,7 +23,7 @@ const PFUNC F100HZ[NUM_100HZ] =
 	Spare,
 	Read_Counters,
 	Spare,
-	Convert_Counter1_To_Temperature,
+	Calculate_Heater_DutyCycle,
 	Spare, 
 	Spare,
 	Spare, //Scale_BatteryVoltage,
@@ -116,5 +116,5 @@ void taskmanager_init()
 		.name = "systick timer"
 	};
 	esp_timer_create(&systickTimerArgs, &systickTimer); // Create the timer
-	esp_timer_start_periodic(systickTimer, 244); // Start the timer in automatic reload mode with a period of 125 microseconds
+	esp_timer_start_periodic(systickTimer, 157); // Start the timer in automatic reload mode with a period of 125 microseconds
 }

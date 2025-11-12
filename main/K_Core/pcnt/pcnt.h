@@ -4,10 +4,10 @@
 
 #define SAMPLE_TIME_MS      1000
 
-#define PCNT_BATTERY_SCAL_VALUE  1000.0
-#define PCNT_RTD_SCAL_VALUE      1000.0
-#define PCNT_TEMP_SCAL_VALUE       1000.0
-#define PCNT_DUTY_SCAL_VALUE       1000.0
+#define PCNT_BATTERY_SCAL_VALUE  3731.0
+#define PCNT_RTD_SCAL_VALUE      8.0
+#define PCNT_TEMP_SCAL_VALUE       1.00
+#define PCNT_DUTY_SCAL_VALUE       1.0
 
 typedef struct 
 {
@@ -32,9 +32,9 @@ extern int PwmTimerReloadRegister;
 void pcnt_init(void);
 void EnableCounter();
 void DisableCounter();
-void Convert_Counter1_To_Temperature();
+void Calculate_Heater_DutyCycle();
 void Scale_BatteryVoltage();
 //float pcnt_convert_temperature(float voltage);
-float pcnt_convert_temperature(const AdcTableStruct* adcTable, float voltage);
+float convertRtdDataFromRawADCValue(const AdcTableStruct* adcTable, float voltage);
 void SetPwmOutput();
 void Read_Counters();
