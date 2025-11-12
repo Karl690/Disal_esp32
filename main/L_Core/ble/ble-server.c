@@ -1,3 +1,4 @@
+#ifdef CONFIG_APP_USE_BLE
 #include "main.h"
 #include "ble.h"
 #include "driver/uart.h"
@@ -482,3 +483,4 @@ void ble_server_received_data(uint8_t* data, uint16_t size)
 	ESP_LOGI(BLE_TAG, "BLE RECEIVED %d bytes", size);
 }
 //////////////////////////////////////////////////////////////////////////////
+#endif

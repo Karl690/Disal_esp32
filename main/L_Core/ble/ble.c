@@ -1,3 +1,4 @@
+#ifdef CONFIG_APP_USE_BLE
 #include "main.h"
 #include "ble.h"
 
@@ -251,3 +252,4 @@ BleRemoteDevice* ble_get_device(uint8_t id)
 	return &ble_client_remote_device[id];
 }
 
+#endif

@@ -52,7 +52,6 @@ int tone_init() {
 }
 
 void tone_play(unsigned int frequency, unsigned long duration){
-  return;
   tone_msg_t tone_msg = {
       .tone_cmd = TONE_START,
       .frequency = frequency,

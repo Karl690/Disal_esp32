@@ -24,7 +24,7 @@ void ui_ble_click_cb(lv_event_t* e) {
 		// ui_helpers_button_text(ui_ble.enabled, systemconfig.bluetooth.server_enabled == 1 ? "ON" : "OFF");
 	} else if (obj == ui_ble.ping) {
 		ui_temp_buffer[0] = 0x7;// PING CODE
-		ble_server_send_data((uint8_t*)ui_temp_buffer, 1);
+		// ble_server_send_data((uint8_t*)ui_temp_buffer, 1);
 	}
 	
 }
@@ -97,8 +97,8 @@ void ui_ble_encoder_rotary_cb(lv_event_t* e)
 					temp += direction;
 					if (temp < 0) temp = 0;
 					else if (temp > 100) temp = 100;
-					ble_update_name(temp);
-					lv_label_set_text_fmt(ui_ble.name, "%s", ble_get_name());
+					// ble_update_name(temp);
+					// lv_label_set_text_fmt(ui_ble.name, "%s", ble_get_name());
 					systemconfig.bluetooth.address_number = temp;
 				}
 				break;
@@ -121,8 +121,8 @@ void ui_ble_encoder_rotary_cb(lv_event_t* e)
 }
 
 void ui_ble_timer_cb(lv_timer_t* t) {
-	ui_helpers_label_set_nmuber(ui_ble.rcv, ble_server_total_received);
-	ui_helpers_label_set_nmuber(ui_ble.xmt, ble_server_total_sent);
+//	ui_helpers_label_set_nmuber(ui_ble.rcv, ble_server_total_received);
+//	ui_helpers_label_set_nmuber(ui_ble.xmt, ble_server_total_sent);
 }
 
 void ui_ble_init(void)
@@ -147,7 +147,7 @@ void ui_ble_init(void)
 	ui_ble.focus = obj;
 
 	uint16_t x = 30, y = 50, step = 40;
-	obj = ui_helpers_create_label(ui_ble_screen, ble_get_name(), &lv_font_montserrat_16);
+	obj = ui_helpers_create_label(ui_ble_screen, "", &lv_font_montserrat_16); //ble_get_name()
 	lv_obj_set_style_text_color(obj, lv_color_hex(0x84ff00), LV_PART_MAIN);
 	lv_obj_align(obj, LV_ALIGN_TOP_MID, 0, y);
 	lv_obj_set_pos(ui_ble.focus, 25, y);

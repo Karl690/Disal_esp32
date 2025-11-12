@@ -1,5 +1,5 @@
 #pragma once
-
+#ifdef CONFIG_APP_USE_BLE
 #include "esp_bt.h"
 
 #include "esp_gap_ble_api.h"
@@ -155,3 +155,4 @@ void ble_client_write_data(uint8_t* data, uint16_t len);
 void ble_client_read_data(uint8_t* data, uint16_t len);
 
 void ble_update_base_address();
+#endif
