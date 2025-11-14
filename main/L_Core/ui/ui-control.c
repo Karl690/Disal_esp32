@@ -25,13 +25,18 @@ void ui_control_refresh()
 }
 
 void ui_control_click_cb(lv_event_t* e) {
+	ui_control_current_time = SliceCnt;
+	if (ui_control_current_time - ui_control_prev_time < 1000) {
+		// prevent to click double for 1 sec.
+		return;
+	}
+	ui_control_prev_time = SliceCnt;
 	lv_obj_t* obj = lv_event_get_target_obj(e);
 	if (obj == ui_control.enabled) {
 		systemconfig.pcnt.enabled = systemconfig.pcnt.enabled == 1 ? 0 : 1;
-		
-		ui_show_messagebox(systemconfig.pcnt.enabled ? MESSAGEBOX_INFO: MESSAGEBOX_ERROR, systemconfig.pcnt.enabled ? "TEMP CTRL is enabled" : "TEMP CTRL is disabled" , 1000);
 		ui_helpers_button_color(ui_control.enabled, systemconfig.pcnt.enabled == 1? 0x00ff00 : 0xff0000, UI_FOREGROUND_COLOR, 0);
 		ui_helpers_button_text(ui_control.enabled, systemconfig.pcnt.enabled? "ON": "OFF");
+		ui_show_messagebox(systemconfig.pcnt.enabled ? MESSAGEBOX_INFO: MESSAGEBOX_ERROR, systemconfig.pcnt.enabled ? "TEMP CTRL is enabled" : "TEMP CTRL is disabled" , 1000);
 	}
 }
 
@@ -181,5 +186,6 @@ void ui_control_init(void)
 	ui_helpers_button_color(obj, systemconfig.pcnt.enabled == 1? 0x00ff00 : 0xff0000, UI_FOREGROUND_COLOR, 0);
 	lv_obj_align(obj, LV_ALIGN_TOP_MID, 0, y);
 	ui_control.enabled = obj;
+	
 
 }
