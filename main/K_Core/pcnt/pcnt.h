@@ -5,19 +5,20 @@
 #define SAMPLE_TIME_MS      1000
 
 #define PCNT_BATTERY_SCAL_VALUE  3731.0
-#define PCNT_RTD_SCAL_VALUE      8.0
+#define PCNT_RTD_SCAL_VALUE      843.0
+
 #define PCNT_TEMP_SCAL_VALUE       1.00
 #define PCNT_DUTY_SCAL_VALUE       1.0
 
 typedef struct 
 {
-    int count01;
-    int count02;
-    float temperature; //'C    
-    int16_t freq; //in Hz
-    float duty; //in %
-    float rtd_volt; //in V
-    float bat_volt; //in V
+	int count01;
+	int count02;
+	float temperature; //'C    
+	int16_t freq; //in Hz
+	int duty; //in %
+	float rtd_volt; //in V
+	float bat_volt; //in V
 } PCNT_INFO;
 
 typedef struct {

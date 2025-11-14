@@ -8,11 +8,15 @@ esp_timer_handle_t systickTimer;
 
 const PFUNC F1000HZ[NUM_1000HZ] =
 {
+	//Spare,
+	SetPwmOutput,
+	//Spare,
 	Spare,
+	SetPwmOutput,
+	//Spare,
 	Spare,
-	Spare,
-	Spare,
-	Spare,
+	SetPwmOutput,
+	//Spare,
 	Spare,
 	SetPwmOutput,
 	Spare,
@@ -23,10 +27,12 @@ const PFUNC F100HZ[NUM_100HZ] =
 	Spare,
 	Read_Counters,
 	Spare,
-	Calculate_Heater_DutyCycle,
+	Spare,
+	//Calculate_Heater_DutyCycle,
 	Spare, 
 	Spare,
-	Spare, //Scale_BatteryVoltage,
+	Spare,
+	//Scale_BatteryVoltage,
 	Spare,
 };
 
@@ -35,7 +41,8 @@ const PFUNC F10HZ[NUM_10HZ] =
 	Spare,
 	Spare,
 	Spare,
-	Spare,
+	Calculate_Heater_DutyCycle,
+	//Spare,
 	Spare,
 	Spare,
 	Spare,
@@ -99,6 +106,7 @@ void Spare(void)
 void BlinkHeartBeat(void)
 {	
 	HeartBeat++;
+
 }
 
 
@@ -116,5 +124,5 @@ void taskmanager_init()
 		.name = "systick timer"
 	};
 	esp_timer_create(&systickTimerArgs, &systickTimer); // Create the timer
-	esp_timer_start_periodic(systickTimer, 157); // Start the timer in automatic reload mode with a period of 125 microseconds
+	esp_timer_start_periodic(systickTimer, 156); // Start the timer in automatic reload mode with a period of 125 microseconds
 }

@@ -18,7 +18,7 @@ void ui_control_refresh()
 	lv_label_set_text(ui_control.v_bat, ui_temp_buffer);
 	
 	sprintf(ui_temp_buffer, "%.2f 'C", pcnt_info.temperature);
-	lv_label_set_text(ui_control.actual_temperature, ui_temp_buffer);
+	lv_label_set_text(ui_control.actual_temperature, ui_temp_buffer);//pcnt_info.temperature
 	
 	sprintf(ui_temp_buffer, "%d", pcnt_info.duty);
 	lv_label_set_text(ui_control.duty, ui_temp_buffer);
