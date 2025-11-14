@@ -4,11 +4,12 @@
 lv_obj_t* ui_settings_screen;
 UI_SETTINGS ui_settings;
 UI_SETTINGS_DATA_ITEM ui_settings_data[] = {
-	{"Temp Scale", &systemconfig.pcnt.temp_scale, VALUE_TYPE_FLOAT, 1, 65535},
+//	{"Temp Scale", &systemconfig.pcnt.temp_scale, VALUE_TYPE_FLOAT, 1, 65535},
+	{"PRG TEMP", &systemconfig.pcnt.programmed_temperature, VALUE_TYPE_FLOAT, 1, 65535},
 	{"BAT Scale", &systemconfig.pcnt.battery_scale, VALUE_TYPE_FLOAT, 1, 65535},
 	{"RTD Scale", &systemconfig.pcnt.rtd_scale, VALUE_TYPE_FLOAT, 1, 65535},
-	{"Duty Scale", &systemconfig.pcnt.duty_scale, VALUE_TYPE_FLOAT, 1, 65535},
-	{"Duty Test", &systemconfig.pcnt.duty_test, VALUE_TYPE_INT, 0, 100},
+//	{"Duty Scale", &systemconfig.pcnt.duty_scale, VALUE_TYPE_FLOAT, 1, 65535},
+//	{"Duty Test", &systemconfig.pcnt.duty_test, VALUE_TYPE_INT, 0, 100},
 };
 #define UI_SETTINGS_ITEM_SIZE 3
 UI_SETTINGS_ITEM ui_settings_ui_items[UI_SETTINGS_ITEM_SIZE];

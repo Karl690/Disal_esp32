@@ -117,9 +117,14 @@ void Calculate_Heater_DutyCycle() {
 //	pcnt_info.duty++; //change by 1 each second
 //	if (pcnt_info.duty > 16)pcnt_info.duty = 0;
 //	return;
-	float deltaTemp = systemconfig.pcnt.programmed_temperature - pcnt_info.temperature;
-	if (deltaTemp < 0)deltaTemp = 0;
-	pcnt_info.duty = (int)deltaTemp;
+	if (systemconfig.pcnt.enabled)
+	{
+		float deltaTemp = systemconfig.pcnt.programmed_temperature - pcnt_info.temperature;
+		if (deltaTemp < 0)deltaTemp = 0;
+		pcnt_info.duty = (int)deltaTemp;
+		return;
+	}
+	pcnt_info.duty = 0;
 }
 
 void SetPwmOutput()
