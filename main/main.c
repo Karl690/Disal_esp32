@@ -56,7 +56,6 @@ bool load_configuration()
 	if (!utils_valid_pins(systemconfig.pcnt.ctrl_pin)) systemconfig.pcnt.ctrl_pin = ControlOutput_PIN;
 	if (systemconfig.pcnt.programmed_temperature == 0x0) systemconfig.pcnt.programmed_temperature = 25;
 	
-	systemconfig.pcnt.enabled = true;
 	if (systemconfig.pcnt.temp_scale == 0.0f) systemconfig.pcnt.temp_scale = PCNT_TEMP_SCAL_VALUE;
 	if (systemconfig.pcnt.battery_scale == 0.0f) systemconfig.pcnt.battery_scale = PCNT_BATTERY_SCAL_VALUE;
 	if (systemconfig.pcnt.rtd_scale == 0.0f) systemconfig.pcnt.rtd_scale = PCNT_RTD_SCAL_VALUE;

@@ -28,10 +28,10 @@ void ui_control_click_cb(lv_event_t* e) {
 	lv_obj_t* obj = lv_event_get_target_obj(e);
 	if (obj == ui_control.enabled) {
 		systemconfig.pcnt.enabled = systemconfig.pcnt.enabled == 1 ? 0 : 1;
-		if (systemconfig.pcnt.enabled) EnableCounter();
-		else DisableCounter();
-		ui_show_messagebox(systemconfig.pcnt.enabled ? MESSAGEBOX_INFO: MESSAGEBOX_ERROR, systemconfig.pcnt.enabled ? "Counte is enabled" : "Counter is disabled" , 1000);
+		
+		ui_show_messagebox(systemconfig.pcnt.enabled ? MESSAGEBOX_INFO: MESSAGEBOX_ERROR, systemconfig.pcnt.enabled ? "TEMP CTRL is enabled" : "TEMP CTRL is disabled" , 1000);
 		ui_helpers_button_color(ui_control.enabled, systemconfig.pcnt.enabled == 1? 0x00ff00 : 0xff0000, UI_FOREGROUND_COLOR, 0);
+		ui_helpers_button_text(ui_control.enabled, systemconfig.pcnt.enabled? "ON": "OFF");
 	}
 }
 
@@ -177,8 +177,8 @@ void ui_control_init(void)
 	lv_obj_align_to(obj, label, LV_ALIGN_LEFT_MID, 90, 0);
 
 	y += step;
-	obj = ui_helpers_create_button(ui_control_screen, "ON", 80, 40, 5, &lv_font_montserrat_14, ui_control_click_cb, NULL);
-	ui_helpers_button_color(obj, 0x00ff00, UI_FOREGROUND_COLOR, 0);
+	obj = ui_helpers_create_button(ui_control_screen, systemconfig.pcnt.enabled ? "ON": "OFF", 80, 40, 5, &lv_font_montserrat_14, ui_control_click_cb, NULL);
+	ui_helpers_button_color(obj, systemconfig.pcnt.enabled == 1? 0x00ff00 : 0xff0000, UI_FOREGROUND_COLOR, 0);
 	lv_obj_align(obj, LV_ALIGN_TOP_MID, 0, y);
 	ui_control.enabled = obj;
 
