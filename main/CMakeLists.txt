@@ -35,10 +35,11 @@ idf_component_register(
                 	L_Core/ui/font/en_bold_20.c
                 	L_Core/ui/font/en_bold_24.c
                 	L_Core/ui/font/en_bold_30.c
-                	L_Core/ui/font/mono_bold_16.c
+					L_Core/ui/font/mono_bold_16.c
                 	L_Core/ui/font/mono_bold_24.c
                 	L_Core/ui/font/mono_bold_28.c
                 	L_Core/ui/font/mono_bold_32.c
+					L_Core/ui/font/mono_regualr_16.c
                 	L_Core/ui/font/mono_regular_24.c                	
                 INCLUDE_DIRS .
 					K_Core

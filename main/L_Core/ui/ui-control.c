@@ -5,22 +5,23 @@
 lv_obj_t* ui_control_screen;
 UI_CONTROL ui_control;
 
-LV_FONT_DECLARE(mono_regular_24);
+LV_FONT_DECLARE(mono_regualr_16);
 
 const uint8_t ui_control_data_size = 1;
 uint32_t ui_control_current_time;
 uint32_t ui_control_prev_time ;
 uint8_t ui_control_click_count = 0;
 
-void ui_control_timer_cb(lv_timer_t * timer)
+void ui_control_refresh()
 {
-	if (lv_obj_is_visible(ui_control_screen))
-	{
-		lv_label_set_text_fmt(ui_control.v_bat, "%dV", pcnt_info.bat_volt);
-		lv_label_set_text_fmt(ui_control.actual_temperature, "%d˚C", pcnt_info.temperature);
-		sprintf(ui_temp_buffer, "%.2f", pcnt_info.duty);
-		lv_label_set_text(ui_control.duty, ui_temp_buffer);
-	}
+	sprintf(ui_temp_buffer, "%.2f V", pcnt_info.bat_volt);
+	lv_label_set_text(ui_control.v_bat, ui_temp_buffer);
+	
+	sprintf(ui_temp_buffer, "%.2f 'C", pcnt_info.temperature);
+	lv_label_set_text(ui_control.actual_temperature, ui_temp_buffer);
+	
+	sprintf(ui_temp_buffer, "%d", pcnt_info.duty);
+	lv_label_set_text(ui_control.duty, ui_temp_buffer);
 }
 
 void ui_control_click_cb(lv_event_t* e) {
@@ -83,7 +84,7 @@ void ui_control_encoder_rotary_cb(lv_event_t* e)
 			switch (ui_control.focus_index)
 			{
 			case 0:
-				lv_obj_set_y(ui_control.focus, lv_obj_get_y(ui_control.programmed_temperature) + 8);
+				lv_obj_set_pos(ui_control.focus, 10, lv_obj_get_y(ui_control.programmed_temperature));
 				break;
 			case 1:
 				lv_obj_set_y(ui_control.focus, -20 );
@@ -99,7 +100,8 @@ void ui_control_encoder_rotary_cb(lv_event_t* e)
 					temp += direction;
 					if (temp < 0) temp = 0;
 					else if (temp > 100) temp = 100;
-					lv_label_set_text_fmt(ui_control.programmed_temperature, "%d˚C", temp);
+					sprintf(ui_temp_buffer, "%d 'c", temp);
+					lv_label_set_text_fmt(ui_control.programmed_temperature, "%s", ui_temp_buffer);
 					systemconfig.pcnt.programmed_temperature = temp;
 				}
 				break;
@@ -120,7 +122,7 @@ void ui_control_init(void)
 	uint16_t x = 0, y = 15, step = 32;	
 
 	lv_obj_t* obj = ui_helpers_create_label(ui_control_screen, "TEMP CNTRL", &lv_font_montserrat_20);
-	lv_obj_set_pos(obj, 50, y + 5);	
+	lv_obj_set_pos(obj, 50, y);	
 	lv_obj_set_style_text_color(obj, lv_color_hex(UI_ITEM_NORMAL_FG_COLOR), LV_PART_MAIN);
 	lv_group_add_obj(group, obj);
 	ui_control.group = group;
@@ -130,55 +132,54 @@ void ui_control_init(void)
 	
 	y += step;
 
-	obj = ui_helpers_create_label(ui_control_screen, LV_SYMBOL_PLAY, &lv_font_montserrat_12);
+	obj = ui_helpers_create_label(ui_control_screen, LV_SYMBOL_PLAY, &lv_font_montserrat_14);
 	lv_obj_set_style_text_color(obj, lv_color_hex(UI_ITEM_FOCUS_FG_COLOR), LV_PART_MAIN);
 	ui_control.focus = obj;
 	
-	obj = ui_helpers_create_label(ui_control_screen, "TEMP: ", &lv_font_montserrat_14);
-	lv_obj_set_style_text_color(obj, lv_color_hex(UI_LABEL_COLOR), LV_PART_MAIN);
-	lv_obj_set_pos(obj, 55, y+5);
-	obj = ui_helpers_create_label(ui_control_screen, "0˚C", &mono_regular_24);
+	lv_obj_t* label = ui_helpers_create_label(ui_control_screen, "TEMP: ", &lv_font_montserrat_14);
+	lv_obj_set_style_text_color(label, lv_color_hex(UI_LABEL_COLOR), LV_PART_MAIN);
+	lv_obj_set_pos(label, 45, y);
+	obj = ui_helpers_create_label(ui_control_screen, "-", &lv_font_montserrat_14);
 	ui_control.actual_temperature = obj;
-	lv_obj_set_pos(obj, 150, y);
+	lv_obj_align_to(obj, label, LV_ALIGN_LEFT_MID, 90, 0);
 
 	y += step;
-	obj = ui_helpers_create_label(ui_control_screen, "PRG TEMP: ", &lv_font_montserrat_14);
-	lv_obj_set_style_text_color(obj, lv_color_hex(0x84ff00), LV_PART_MAIN);
-	lv_obj_set_pos(obj, 55, y+5);
-	obj = ui_helpers_create_label(ui_control_screen, "", &mono_regular_24);
-	lv_label_set_text_fmt(obj, "%d ˚C", systemconfig.pcnt.programmed_temperature);
+	label = ui_helpers_create_label(ui_control_screen, "PRG TEMP: ", &lv_font_montserrat_14);
+	lv_obj_set_style_text_color(label, lv_color_hex(0x84ff00), LV_PART_MAIN);
+	lv_obj_set_pos(label, 35, y);
+	obj = ui_helpers_create_label(ui_control_screen, "", &lv_font_montserrat_14);
+	lv_label_set_text_fmt(obj, "%d 'C", systemconfig.pcnt.programmed_temperature);
 	lv_obj_add_flag(obj, LV_OBJ_FLAG_CLICKABLE);
 	lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
 	lv_obj_set_style_pad_all(obj, 3, LV_PART_MAIN);
 	// lv_obj_set_width(obj, 60);
 	lv_group_focus_obj(obj);
-	lv_obj_set_pos(obj, 150, y);
+	lv_obj_align_to(obj, label, LV_ALIGN_LEFT_MID, 90, 0);
 	ui_control.programmed_temperature = obj;
 
-	lv_obj_set_pos(ui_control.focus, 35, y + 5);
+	lv_obj_set_pos(ui_control.focus, 10, y);
 	
 	
 	y += step;
-	obj = ui_helpers_create_label(ui_control_screen, "Duty:", &lv_font_montserrat_14);
-	lv_obj_set_style_text_color(obj, lv_color_hex(UI_LABEL_COLOR), LV_PART_MAIN);
-	lv_obj_set_pos(obj, 55, y+5);
-	obj = ui_helpers_create_label(ui_control_screen, "0%", &mono_regular_24);
+	label = ui_helpers_create_label(ui_control_screen, "Duty:", &lv_font_montserrat_14);
+	lv_obj_set_style_text_color(label, lv_color_hex(UI_LABEL_COLOR), LV_PART_MAIN);
+	lv_obj_set_pos(label, 20, y);
+	obj = ui_helpers_create_label(ui_control_screen, "-", &lv_font_montserrat_14);
 	ui_control.duty = obj;
-	lv_obj_set_pos(obj, 150, y);
+	lv_obj_align_to(obj, label, LV_ALIGN_LEFT_MID, 90, 0);
 	
 	y += step;
-	obj = ui_helpers_create_label(ui_control_screen, "V BAT:", &lv_font_montserrat_14);
-	lv_obj_set_style_text_color(obj, lv_color_hex(UI_LABEL_COLOR), LV_PART_MAIN);
-	lv_obj_set_pos(obj, 55, y+5);
-	obj = ui_helpers_create_label(ui_control_screen, "0V", &mono_regular_24);
+	label = ui_helpers_create_label(ui_control_screen, "V BAT:", &lv_font_montserrat_14);
+	lv_obj_set_style_text_color(label, lv_color_hex(UI_LABEL_COLOR), LV_PART_MAIN);
+	lv_obj_set_pos(label, 40, y);
+	obj = ui_helpers_create_label(ui_control_screen, "-", &lv_font_montserrat_14);
 	ui_control.v_bat = obj;
-	lv_obj_set_pos(obj, 150, y);
+	lv_obj_align_to(obj, label, LV_ALIGN_LEFT_MID, 90, 0);
 
-	// y += step;
-	// obj = ui_helpers_create_button(ui_control_screen, systemconfig.pcnt.enabled== 1? "ON": "OFF", 80, 40, 5, &lv_font_montserrat_14, ui_control_click_cb, NULL);
-	// ui_helpers_button_color(obj, systemconfig.pcnt.enabled== 1? 0x00ff00: 0xff0000, UI_FOREGROUND_COLOR, 0);
-	// lv_obj_align(obj, LV_ALIGN_TOP_MID, 0, y);
-	// ui_control.enabled = obj;
-	
-	lv_timer_create(ui_control_timer_cb, 1000, NULL);
+	y += step;
+	obj = ui_helpers_create_button(ui_control_screen, "ON", 80, 40, 5, &lv_font_montserrat_14, ui_control_click_cb, NULL);
+	ui_helpers_button_color(obj, 0x00ff00, UI_FOREGROUND_COLOR, 0);
+	lv_obj_align(obj, LV_ALIGN_TOP_MID, 0, y);
+	ui_control.enabled = obj;
+
 }

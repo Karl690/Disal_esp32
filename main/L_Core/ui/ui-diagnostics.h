@@ -32,3 +32,4 @@ extern lv_obj_t *ui_diag_screen;
 
 
 void ui_diag_init(void);
+void ui_diag_refresh();

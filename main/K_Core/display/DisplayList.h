@@ -62,6 +62,7 @@ typedef struct {
 
 #define NUMBER_OF_DISPLAY_LISTS 4
 
-extern DisplayVariableInfo LcdDiagVarsTable[];
+extern DisplayVariableInfo LcdDiagVarsTable1[];
+extern DisplayVariableInfo LcdDiagVarsTable2[];
 extern const int LcdDiagVarsSize;
 

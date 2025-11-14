@@ -19,3 +19,4 @@ typedef struct {
 } UI_CONTROL;
 
 void ui_control_init(void);
+void ui_control_refresh();

@@ -177,7 +177,16 @@ void ui_gesture_event_handler(lv_event_t * e)
 
 void ui_update_timer(lv_timer_t * timer)
 {
-	
+	switch(ui_current_screen) {
+	case SCREEN_CONTROL:
+		ui_control_refresh();
+		break;
+	case SCREEN_DIAGNOSTICS:
+		ui_diag_refresh();
+		break;
+	default:
+		break;
+	}
 }
 void ui_init( void )
 {
